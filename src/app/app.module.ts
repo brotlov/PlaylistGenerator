@@ -2,6 +2,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {MatButtonModule, MatCheckboxModule} from '@angular/material';
+import { FormsModule } from '@angular/forms';
+import {HttpClientModule} from '@angular/common/http';
+import {HttpModule} from '@angular/http';
 
 import { AppComponent } from './app.component';
 import { SpotifyComponent } from './spotify/spotify.component';
@@ -28,6 +31,9 @@ const appRoutes: Routes = [
     BrowserModule,
     MatCheckboxModule,
     MatButtonModule,
+    FormsModule,
+    HttpClientModule,
+    HttpModule,
     RouterModule.forRoot(
       appRoutes,
       { enableTracing: false } // <-- debugging purposes only

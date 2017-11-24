@@ -1,28 +1,44 @@
 <div class="container sm playlist-generator">
   <div class="center">
-    <input placeholder="Playlist Name" />
+    <input [(ngModel)]="playlistName" placeholder="Playlist Name" />
   </div>
   <div class="playlist-generator-body">
-    <div class="playlist-generator-item">
+    <div *ngIf="loadingPlaylist" class="loader"></div>
+    <!--<div class="playlist-generator-item">
       <h4>Artists</h4>
       <div class="selected-items">
-        <!--<span>Fall out boy</span>-->
+        <span *ngFor="let s of selectedArtists">{{s.name}}</span>
       </div>
       <div class="playlist-generator-item-content">
         <p>Type an artist to add to your playlist</p>
-        <input placeholder="Artist Name">
+        <div class="searcher">
+          <input type="text" [(ngModel)]="newArtist" (ngModelChange)="onFieldChange($event)" placeholder="Artist Name"/>
+          <div class="results">
+            <div *ngIf="errorMessage != ''" class="error">
+              <p>{{errorMessage}}</p>
+            </div>
+            <ul [ngClass]="{ 'loading': loading == true }">
+                <div *ngIf="loading" class="loader"></div>
+                <li (click)="addArtist(artist)" *ngFor="let artist of artistSearchResults">
+                  <img height="160" *ngIf="artist.images.length != 0" [src]="artist.images[1].url"/>
+                  <img *ngIf="artist.images.length == 0" src="http://via.placeholder.com/160x160">
+                  <span>{{artist.name}}</span>
+                </li>
+            </ul>
+          </div>
+        </div>
       </div>
-    </div>
+    </div>-->
     <div class="playlist-generator-item">
       <h4>Genre</h4>
-       <div class="selected-items">
-        <!--<span>Fall out boy</span>-->
-      </div>
       <div class="playlist-generator-item-content">
         <p>Select the different Genre's that you'd like to appear in your playlist</p>
-        <mat-checkbox *ngFor="let genre of genreList">
+        <mat-checkbox (click)="toggleGenre(genre)" *ngFor="let genre of genreList">
           {{genre.Name}}
         </mat-checkbox>
+      </div>
+      <div class="selected-items">
+        <span *ngFor="let s of selectedGenres">{{s.Name}}</span>
       </div>
     </div>
     <div class="playlist-generator-item">
@@ -42,6 +58,9 @@
       <div class="playlist-generator-item-content">
         <input placeholder="Artist Name">
       </div>
+    </div>
+    <div class="playlist-generate-button-wrapper">
+      <button (click)="generatePlaylist()" color="warn" mat-raised-button>Generate Playlist</button>
     </div>
   </div>
 </div>

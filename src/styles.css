@@ -8,6 +8,17 @@
     padding:0;
     transition:.2s;
 }
+.navbar{
+    background:#191414;
+    text-align: center;
+}
+.navbar a{
+    color:#fff;
+    padding:20px;
+    text-decoration: none;
+    display: inline-block;
+    font-size:30px;
+}
 h1{
     font-size:65px;
     color:#191414;
@@ -30,6 +41,9 @@ h3{
     width:100%;
     font-size:0;
     height:70vh;
+}
+.container.fw.short{
+    height: auto;
 }
 .container.sm{
     width:650px;
@@ -101,15 +115,17 @@ input:focus{
 }
 .selected-items{
     display: inline-block;
-    width:60%;
+    width:100%;
+    margin:10px 0 0;
 }
 .selected-items span{
     padding:6px 16px;
-    display: inline;
+    display: inline-block;
     border:1px solid #191414;
     position: relative;
     font-size:14px;
     border-radius:20px;
+    margin:10px;
 }
 .selected-items span:after{
    
@@ -118,6 +134,9 @@ input:focus{
     background:#191414;
     color:#fff;
     cursor: pointer;
+}
+.playlist-generator-item-content > p{
+    margin:10px 0;
 }
 .playlist-generator-item-content input{
     font-size:16px;
@@ -132,4 +151,84 @@ input:focus{
     border-width: 2px;
     border-style: solid;
     border-color: rgba(0,0,0,.54);
+}
+.playlist-generate-button-wrapper{
+    margin-top:25px;
+    text-align: center;
+}
+.playlist-generate-button-wrapper button{
+    font-size:16px;
+}
+.searcher{
+    position: relative;
+}
+.searcher .results{
+
+}
+.searcher .results ul{
+    list-style: none;
+    padding:0;
+    margin:0;
+    text-align: center;
+}
+.results ul.loading{
+    height:250px;
+}
+.searcher .results ul li{
+    display: inline-block;
+    width:30%;
+    text-align: center;
+    margin:10px;
+    position: relative;
+    overflow: hidden;
+    vertical-align: top;
+}
+.searcher .results ul li:after{
+    display: none;
+    background:rgba(255,255,255,.5);
+    top:0;
+    bottom:0;
+    margin:auto;
+    left:0;
+    position: absolute;
+    content:'add';
+    width:100%;
+    height: 24px;
+    padding:250px 0;
+    direction: ltr;
+    font-family: 'Material Icons';
+    font-size: 24px;
+    font-style: normal;
+    font-weight: normal;
+    letter-spacing: normal;
+    line-height: 1;
+    text-transform: none;
+    white-space: nowrap;
+    word-wrap: normal;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+}
+.searcher .results ul li:hover{
+    cursor: pointer;
+}
+
+.searcher .results ul li:hover:after{
+    display: inline-block;
+}
+
+.searcher .results ul li img,.searcher .results ul li span{
+    display: inline-block;
+}
+.loader{
+    z-index:10;
+    position: absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height: 100%;
+    background:rgba(255,255,255,.8);
+    background-image:url('/assets/loading.gif');
+    background-position: center;
+    background-size:50px;
+    background-repeat: no-repeat;
 }

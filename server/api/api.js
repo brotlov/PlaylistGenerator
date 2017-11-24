@@ -1,15 +1,19 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const path = require('path');
-const http = require('http');
-const app = express();
+/**
+ * This is an example of a basic node.js script that performs
+ * the Authorization Code oAuth2 flow to authenticate against
+ * the Spotify Accounts.
+ *
+ * For more information, read
+ * https://developer.spotify.com/web-api/authorization-guide/#authorization_code_flow
+ */
 
+var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
-
+const router = express.Router();
 var client_id = 'd4962bb9984847e2aaa60cff7ce2aaeb'; // Your client id
-var client_secret = '[SECRET]'; // Your secret
+var client_secret = '37419976fb114830acd42e85f93d778d'; // Your secret
 var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
 
 /**
@@ -28,25 +32,11 @@ var generateRandomString = function(length) {
 };
 
 var stateKey = 'spotify_auth_state';
-var scopes = 'user-read-private user-read-email playlist-modify playlist-modify-public playlist-modify-private user-library-read user-library-modify playlist-read-collaborative playlist-read-private'
 
-// API file for interacting with MongoDB
-// const api = require('./server/routes/api');
-
-// API location
-// app.use('/api', api);
-
-// Parsers
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false}));
+var app = express();
 
 app.use(express.static(__dirname + '/public'))
    .use(cookieParser());
-
-// Angular DIST output folder
-app.use(express.static(path.join(__dirname, 'dist')));
-
-
 
 app.get('/spotifyLogin', function(req, res) {
 
@@ -54,7 +44,7 @@ app.get('/spotifyLogin', function(req, res) {
   res.cookie(stateKey, state);
 
   // your application requests authorization
-  var scope = "user-read-private user-read-email playlist-modify playlist-modify-public playlist-modify-private user-library-read user-library-modify playlist-read-collaborative playlist-read-private";
+  var scope = 'user-read-private user-read-email';
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
@@ -69,9 +59,11 @@ app.get('/callback', function(req, res) {
 
   // your application requests refresh and access tokens
   // after checking the state parameter
+
   var code = req.query.code || null;
   var state = req.query.state || null;
   var storedState = req.cookies ? req.cookies[stateKey] : null;
+
   if (state === null || state !== storedState) {
     res.redirect('/#' +
       querystring.stringify({
@@ -106,7 +98,7 @@ app.get('/callback', function(req, res) {
 
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
-        //   console.log(body);
+          console.log(body);
         });
 
         // we can also pass the token to the browser to make requests from there
@@ -149,16 +141,3 @@ app.get('/refresh_token', function(req, res) {
     }
   });
 });
-
-// Send all other requests to the Angular app
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist/index.html'));
-});
-
-//Set Port
-const port = process.env.PORT || '3000';
-app.set('port', port);
-
-const server = http.createServer(app);
-
-server.listen(port, () => console.log(`Running on localhost:${port}`));
