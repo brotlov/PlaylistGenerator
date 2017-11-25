@@ -87,7 +87,7 @@ export class SpotifyComponent implements OnInit {
 
   ngOnInit() {
     // this.access_token = this.activatedRoute.snapshot.queryParams["access_token"];
-    this.access_token = "BQC9_yTTE_KOCcrag7lRdexculnLmwRGEO0c-vBQBbrkCYlp7h7_n5c4BVCSyI2q4ncBmfnvk2Cx8Wq771_QifRb-R4yzoHZvRN-j63z8dCwAdceG86f6yZujH2o0dH70hsnH4QZf_w7B-XlGPSd1N8IwrDAs8fb0Z2fueb4Sg2Bnc5aIJjaCciTifAU5H8PQ3jzc0hWkbQV8t-l5sIR0oT_MhKN3xCvn7s8-EapEY6KOw";
+    this.access_token = "BQDbN_auVC930SIKGJiNB8VPiCQLn67FOTjw1IM1N5JEMXWJb5RM6sVukkvBQMEg6SAmDkGkVUW5htQX0IYLz8SxQRSY_COZoesl1Z6q3yM1vnpq0Nc1swf0kP5ptESUWLvQxiS-ow2z_jXyfG2oEXS5xg3ZKN69ViL4uyz3CcNGsinDD-57uLwUABOwcTAtAVxBANcKcyPfNi_dfuceLdos_EVhEhGhl-TzVOh2mfng-g";
     var url = 'https://api.spotify.com/v1/me';
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
@@ -130,11 +130,11 @@ export class SpotifyComponent implements OnInit {
     headers.append('Authorization', `Bearer ${this.access_token}`);
     let options = new RequestOptions({ headers: headers });
     this.loadingPlaylist = true;
-    var url = this.apiBaseUrl + "q=genre:" + newPlaylistOptions.Genre[0].Name + "&type=track";
-    var url2 = "https://api.spotify.com/v1/users/" + this.userData.id + "/playlists"
-    
+
+  for (var i=0;i < newPlaylistOptions.Genre.length;i++){
+    var url = this.apiBaseUrl + "q=genre:" + newPlaylistOptions.Genre[i].Name + "&type=track";
     this.http.get(url, options)
-      .subscribe(response => {
+        .subscribe(response => {
           response.json().tracks.items.forEach(element => {
             var trackToAdd = {
               id: element.id,
@@ -143,21 +143,32 @@ export class SpotifyComponent implements OnInit {
             }
             selectedTracks.uris.push("spotify:track:" + trackToAdd.id);
           })
+
+          for (let i = selectedTracks.uris.length - 1; i > 0; i--) {
+              let j = Math.floor(Math.random() * (i + 1));
+              [selectedTracks.uris[i], selectedTracks.uris[j]] = [selectedTracks.uris[j], selectedTracks.uris[i]];
+          }
+                    
+        });
+        if (i == (newPlaylistOptions.Genre.length - 1)){
+          var url2 = "https://api.spotify.com/v1/users/" + this.userData.id + "/playlists"
           var data = {
-          "name": this.playlistName
+            "name": this.playlistName
           }
           var data2 = {
             "uris": selectedTracks.uris
           }
+          console.log(selectedTracks.uris);
           this.http.post(url2, JSON.stringify(data), options)
-          .subscribe(response => {
-            var url3 = "https://api.spotify.com/v1/users/" + this.userData.id + "/playlists/" + response.json().id + "/tracks"
-            this.http.post(url3, JSON.stringify(data2), options)
-            .subscribe(response => {
-              this.loadingPlaylist = false;
-              console.log(response.json());
+              .subscribe(response => {
+                var url3 = "https://api.spotify.com/v1/users/" + this.userData.id + "/playlists/" + response.json().id + "/tracks"
+                this.http.post(url3, JSON.stringify(data2), options)
+                .subscribe(response => {
+                  this.loadingPlaylist = false;
+                })
             })
-          })
-      });
+          
+        }
+    }
   }
 }
