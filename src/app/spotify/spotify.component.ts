@@ -14,13 +14,14 @@ import { Cookie } from 'ng2-cookies/ng2-cookies';
 })
 export class SpotifyComponent implements OnInit {
 
+  relatedArtistList = {"artists":[]};
   newPlaylistUrl: string;
   playlistCreated = false;
   selectedTracks = {"uris":[]};
   numberOfPlaylistSongs = 250;
   playlistNameValid: boolean;
   genreLoading = false;
-  playlistName: string;
+  playlistName = "test";
   userData: any;
   errorMessage: string;
   newArtist: string;
@@ -32,6 +33,7 @@ export class SpotifyComponent implements OnInit {
   access_token: string;
   responseData: any;
   apiBaseUrl = "https://api.spotify.com/v1/search?";
+
   public genreList = [
       {Name: "Pop", IsSelected: false},
       {Name: "Dance Pop", IsSelected: false},
@@ -1606,7 +1608,6 @@ export class SpotifyComponent implements OnInit {
               }else{
                 this.errorMessage = "";
                 this.artistSearchResults = response.json().artists.items;
-                console.log(this.artistSearchResults);
               }
               this.loading = false;
             });
@@ -1628,7 +1629,7 @@ export class SpotifyComponent implements OnInit {
 
   ngOnInit() {
     // this.access_token = this.activatedRoute.snapshot.queryParams["access_token"];
-    this.access_token = "BQCrGQnZJx_qrjLmQ1ScHRL0cPJn_1Y9JJ3ss61AIKuXps7eaasoKTs1wt31bzXz6PN92j8CPD3OiL49WtNLGXo9qfGPRV3PFSbLR_pEjWKzZI91L0umtuN9hqzZCT8JyMPFsNbOzDBbZt7fFkrX0LULyvPo1T3TVgvGJBruo4GAwNTstXWb0qOd2u7FyZXzVVpE2q07uleP-8i0hYSBWY7KuCu8VuI4rdFefLlsr_zSjw";
+    this.access_token = "BQCpiQ-PYAYaSYhA8UJ9pLDxNnotKvgOKlilrqxysNI4egoK6Bz9QB6YH8FjnRnzR09Gbmkx15TiS4QH0OvUL_QCgGq1H_0XPerbdUuJSmLMRrTXYjpdpxsmw2aeSx4bMMXbGB59rN82CXShXtgx-G2BzF4_sZ3_Dvv6RzptgXl82XtE7ZzB7pFZA51IIGfl9v8P0m9MIfyt91NfRHFXswQ_Paz1XIuZ9dO32WCVSi7fKA";
     var url = 'https://api.spotify.com/v1/me';
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
@@ -1658,6 +1659,10 @@ export class SpotifyComponent implements OnInit {
     this.selectedArtists.push(artist);
   }
 
+  removeArtist(artist){
+    this.selectedGenres.splice(this.selectedArtists.indexOf(artist), 1);
+  }
+
   toggleGenre(genre){
     // genre.IsSelected = !genre.IsSelected;
     if(this.selectedGenres.indexOf(genre) !== -1) {
@@ -1679,24 +1684,40 @@ export class SpotifyComponent implements OnInit {
       this.playlistNameValid = true;
       this.loadingPlaylist = true;
       var playlistId = "";
-      var newPlaylistOptions = {
-        Genre: this.selectedGenres
-      }
+      
       let headers = new Headers();
       headers.append('Content-Type', 'application/json');
       headers.append('Authorization', `Bearer ${this.access_token}`);
       let options = new RequestOptions({ headers: headers });
-      var genreCount = newPlaylistOptions.Genre.length;
-      var songsPerGenre = this.numberOfPlaylistSongs / genreCount;
-      for (var i=0;i < newPlaylistOptions.Genre.length;i++){
-        var url = this.apiBaseUrl + "q=genre:" + newPlaylistOptions.Genre[i].Name.replace(/\s/g, '-') + "&type=track&market=AU&offset=0&limit=50";
+
+      var artistCount = this.selectedArtists.length;
+      var genreCount = this.selectedGenres.length;
+      var parameterCount = artistCount + genreCount;
+      var songsPerParameter = this.numberOfPlaylistSongs / parameterCount;
+      var artistSongs = [];
+      var mainArtistRelatedArtistRatio = .25;
+      var mainArtistSongTotal = Math.ceil(songsPerParameter * mainArtistRelatedArtistRatio);
+      var numberOfRelatedArtistsPerMainArtist = 20;
+      var numberOfRelatedArtistSongs = Math.ceil((songsPerParameter * (1 - mainArtistRelatedArtistRatio)) / numberOfRelatedArtistsPerMainArtist);
+
+      //Add artists and related artists
+      for (var i=0;i < this.selectedArtists.length;i++){
+        cnt++;
+        var url = this.apiBaseUrl + "q=artist:" + this.selectedArtists[i].name.replace(/\s/g, '-') + "&type=track&market=AU&offset=0&limit=50";
+        var repeat = true;
+        this.addArtistSongs(url, options,artistSongs,mainArtistSongTotal,i,numberOfRelatedArtistsPerMainArtist,numberOfRelatedArtistSongs, repeat);
+      }
+      
+      //Add genres
+      for (var i=0;i < this.selectedGenres.length;i++){
+        cnt++;
+        var url = this.apiBaseUrl + "q=genre:" + this.selectedGenres[i].Name.replace(/\s/g, '-') + "&type=track&market=AU&offset=0&limit=50";
         this.http.get(url, options)
           .subscribe(response => {
             var genreSongsAdded = 0;
-            cnt++;
             var cnt2 = 0;
             response.json().tracks.items.forEach(element => {
-              if (cnt2 < songsPerGenre){
+              if (cnt2 < songsPerParameter){
                 var trackToAdd = {
                   id: element.id,
                   name: element.name,
@@ -1707,20 +1728,22 @@ export class SpotifyComponent implements OnInit {
               }
             })
             genreSongsAdded += response.json().tracks.items.length;
-            if (response.json().tracks.items.length < songsPerGenre && genreSongsAdded < songsPerGenre){
-              this.addAdditionalSongs(options, songsPerGenre, genreSongsAdded, response.json(), newPlaylistOptions, cnt);
-            }else{
-              this.createPlaylist(cnt, newPlaylistOptions, options);
+            if (response.json().tracks.items.length < songsPerParameter && genreSongsAdded < songsPerParameter){
+              this.addAdditionalSongs(options, songsPerParameter, genreSongsAdded, response.json(), this.selectedGenres, cnt);
             }
         });
       }
+
+      //Create playlist, and add selected tracks to playlist
+      this.createPlaylist(cnt, parameterCount, options)
+
     }else{
       this.playlistNameValid = false;
     }
   }
 
-  addAdditionalSongs(options:RequestOptions, songsPerGenre, genreSongsAdded, response, newPlaylistOptions, cnt){
-    var songsToGet = songsPerGenre - genreSongsAdded;
+  addAdditionalSongs(options:RequestOptions, songsPerParameter, genreSongsAdded, response, selectedGenres, cnt){
+    var songsToGet = songsPerParameter - genreSongsAdded;
     var cnt2 = 0;
     this.http.get(response.tracks.next, options)
     .subscribe(response => { 
@@ -1736,10 +1759,10 @@ export class SpotifyComponent implements OnInit {
           }
         })
         genreSongsAdded += cnt2;
-        if (response.json().tracks.items.length < songsPerGenre && genreSongsAdded < songsPerGenre){
-          this.addAdditionalSongs(options, songsPerGenre, genreSongsAdded, response.json(), newPlaylistOptions, cnt);
+        if (response.json().tracks.items.length < songsPerParameter && genreSongsAdded < songsPerParameter){
+          this.addAdditionalSongs(options, songsPerParameter, genreSongsAdded, response.json(), selectedGenres, cnt);
         }else{
-          this.createPlaylist(cnt, newPlaylistOptions, options);
+          // this.createPlaylist(cnt, selectedGenres, options);
         }
     });
   }
@@ -1773,31 +1796,41 @@ export class SpotifyComponent implements OnInit {
   }
 
   shufflePlaylist(selectedTracks){
-    for (let i = selectedTracks.uris.length - 1; i > 0; i--) {
+    for (let i = selectedTracks.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
-        [selectedTracks.uris[i], selectedTracks.uris[j]] = [selectedTracks.uris[j], selectedTracks.uris[i]];
+        [selectedTracks[i], selectedTracks[j]] = [selectedTracks[j], selectedTracks[i]];
     }
   }
 
-  createPlaylist(cnt, newPlaylistOptions, options){
-    this.shufflePlaylist(this.selectedTracks);
-    if (cnt == newPlaylistOptions.Genre.length){
-      var url2 = "https://api.spotify.com/v1/users/" + this.userData.id + "/playlists"
-      var data = {
-        "name": this.playlistName
+  createPlaylist(cnt, parameterCount, options){
+    var cnt2 = 0;
+    if (this.selectedTracks.uris.length == 0){
+      if (cnt2 == 3){
+        console.log("Timeout. Please try again")
+      }else{
+        cnt2++;
+        setTimeout(() => this.createPlaylist(cnt, parameterCount, options), 3000)
       }
-      var data2 = {
-        "uris": this.selectedTracks.uris
+    }else{
+      this.shufflePlaylist(this.selectedTracks.uris);
+      if (cnt == parameterCount){
+        var url2 = "https://api.spotify.com/v1/users/" + this.userData.id + "/playlists"
+        var data = {
+          "name": this.playlistName
+        }
+        if (this.selectedTracks.uris.length > this.numberOfPlaylistSongs){
+          this.selectedTracks.uris = this.selectedTracks.uris.slice(0, this.numberOfPlaylistSongs);
+        }
+        var data2 = {
+          "uris": this.selectedTracks.uris
+        }
+        this.http.post(url2, JSON.stringify(data), options)
+          .subscribe(response => {
+            var url3 = "https://api.spotify.com/v1/users/" + this.userData.id + "/playlists/" + response.json().id + "/tracks"
+            this.newPlaylistUrl = response.json().external_urls.spotify;
+            this.addTracksToPlaylist(url3,this.userData.id, response.json().id,data2, options);
+        })
       }
-      if (this.selectedTracks.uris.length > this.numberOfPlaylistSongs){
-        this.selectedTracks.uris = this.selectedTracks.uris.slice(0, this.numberOfPlaylistSongs);
-      }
-      this.http.post(url2, JSON.stringify(data), options)
-        .subscribe(response => {
-          var url3 = "https://api.spotify.com/v1/users/" + this.userData.id + "/playlists/" + response.json().id + "/tracks"
-          this.newPlaylistUrl = response.json().external_urls.spotify;
-          this.addTracksToPlaylist(url3,this.userData.id, response.json().id,data2, options);
-      })
     }
   }
 
@@ -1812,4 +1845,56 @@ export class SpotifyComponent implements OnInit {
     this.selectedGenres = [];
   }
 
+  getRelatedArtists(i,options, numberOfSongsPerRelatedArtists, url,artistSongs,mainArtistRatio,numberOfRelatedArtistSongs){
+    var cnt = 0;
+      this.http.get(url, options)
+      .subscribe(response => {
+        this.relatedArtistList.artists = [];
+        if (cnt < numberOfSongsPerRelatedArtists){
+          response.json().artists.forEach(element => {
+            var artistToAdd = {
+              id: element.id,
+              name: element.name,
+            }
+            cnt++;
+            this.relatedArtistList.artists.push(artistToAdd.name);
+          })
+        }
+        var cnt2 = 0;
+        var index = 0;
+        var repeat = false;
+        this.relatedArtistList.artists.forEach(element => {
+          if (cnt2 == 0){
+            var url = this.apiBaseUrl + "q=artist:" + element.replace(/\s/g, '-') + " OR " + this.relatedArtistList.artists[index + 1].replace(/\s/g, '-') + "&type=track&market=AU&offset=0&limit=10";
+            this.addArtistSongs(url, options, artistSongs, (numberOfRelatedArtistSongs * 2.5),i,numberOfSongsPerRelatedArtists,numberOfRelatedArtistSongs, repeat);
+            cnt2++;
+          }else{
+            cnt2 = 0;
+          }
+          index++;
+        })
+    })
+  }
+
+  addArtistSongs(url, options, artistSongs, mainArtistSongTotal,i,numberOfRelatedArtistsPerMainArtist,numberOfRelatedArtistSongs, repeat){
+    this.http.get(url, options)
+      .subscribe(response => {
+        artistSongs = [];
+        response.json().tracks.items.forEach(element => {
+          var trackToAdd = {
+            id: element.id,
+            name: element.name,
+            artist: element.artists[0].name
+          }
+          artistSongs.push("spotify:track:" + trackToAdd.id);
+        })
+        this.shufflePlaylist(artistSongs);
+        artistSongs = artistSongs.slice(0, mainArtistSongTotal);
+        this.selectedTracks.uris = this.selectedTracks.uris.concat(artistSongs);
+        if (repeat){
+          var url2 = "https://api.spotify.com/v1/artists/" + this.selectedArtists[i].id  + "/related-artists"
+          this.getRelatedArtists(i, options, numberOfRelatedArtistsPerMainArtist,url2,artistSongs,mainArtistSongTotal,numberOfRelatedArtistSongs);
+        }
+    })
+  }
 }

@@ -8,13 +8,10 @@
   </div>
   <div class="playlist-generator-body">
     <div *ngIf="loadingPlaylist" class="loader"></div>
-    <!--<div class="playlist-generator-item">
+    <div class="playlist-generator-item">
       <h4>Artists</h4>
-      <div class="selected-items">
-        <span *ngFor="let s of selectedArtists">{{s.name}}</span>
-      </div>
       <div class="playlist-generator-item-content">
-        <p>Type an artist to add to your playlist</p>
+        <p>Type an artist to add to your playlist. By adding an artist, your playlist will contain songs from that artist, as well as songs from related artists.</p>
         <div class="searcher">
           <input type="text" [(ngModel)]="newArtist" (ngModelChange)="onFieldChange($event)" placeholder="Artist Name"/>
           <div class="results">
@@ -32,7 +29,10 @@
           </div>
         </div>
       </div>
-    </div>-->
+      <div class="selected-items">
+        <span (click)="removeArtist(s)" *ngFor="let s of selectedArtists">{{s.name}} <i class="material-icons">close</i></span>
+      </div>
+    </div>
     <div class="playlist-generator-item">
       <h4>Genre</h4>
       <div class="playlist-generator-item-content">
