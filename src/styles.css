@@ -89,6 +89,16 @@ h3{
 .playlist-generator{
     padding:50px 0;
 }
+.playlist-completed{
+    margin-top:25px;
+    text-align: center;
+}
+.playlist-completed p{
+    margin-top:15px;
+}
+.playlist-completed a{
+
+}
 .playlist-generator input{
     border:none;
     border-bottom:3px solid #191414;
@@ -113,7 +123,6 @@ input:focus{
     margin-bottom:10px;
 }
 .playlist-generator-item h4{
-    width:30%;
     display: inline-block;
 }
 .selected-items{
@@ -129,14 +138,20 @@ input:focus{
     font-size:14px;
     border-radius:20px;
     margin:10px;
+    transition:.4s;
+    line-height: 14px;
 }
-.selected-items span:after{
-   
+.selected-items i{
+    font-size:14px;
+    transition:0s!important;
+    position: relative;
+    top:1.5px;
 }
 .selected-items span:hover{
     background:#191414;
     color:#fff;
     cursor: pointer;
+    transition:.4s;
 }
 .playlist-generator-item-content > p{
     margin:10px 0;

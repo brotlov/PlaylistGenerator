@@ -14,6 +14,8 @@ import { Cookie } from 'ng2-cookies/ng2-cookies';
 })
 export class SpotifyComponent implements OnInit {
 
+  newPlaylistUrl: string;
+  playlistCreated = false;
   selectedTracks = {"uris":[]};
   numberOfPlaylistSongs = 250;
   playlistNameValid: boolean;
@@ -1617,8 +1619,7 @@ export class SpotifyComponent implements OnInit {
       .debounceTime(1000) // wait 1 sec after the last event before emitting last event
       .distinctUntilChanged() // only emit if value is different from previous value
       .subscribe(model => {
-        
-        this.filteredGenreResults = [];
+        // this.filteredGenreResults = [];
         this.genreSearchString = model.toLowerCase();
         this.filteredGenreResults = this.completeGenreList.filter(item => item.Name.toLowerCase().indexOf(this.genreSearchString.toLowerCase()) !== -1).slice(0, 21);
         this.genreLoading = false;
@@ -1627,7 +1628,7 @@ export class SpotifyComponent implements OnInit {
 
   ngOnInit() {
     // this.access_token = this.activatedRoute.snapshot.queryParams["access_token"];
-    this.access_token = "BQArDFnsgt2_VRBJBzUzV8fk0UYItPlvKLHZXZE-GL9JRMwRHCb0ZNcC3-IV-fVDlRnq0myU0nWQ_38bbUW3FmCrH474d2qYKKOOmlpjSuxpzFjEgGuMfjSlFIvJrzx_5E2nUQCUpqDPjuJRBU1uKAn5hYU4zTJhNEqKbys_qXUv3blg_CXrVIZECHLaZJv3t_qePR7_RRYObCq4V5S7BI1c7p7ioSMAVAouI8ODH7H6EQ";
+    this.access_token = "BQCrGQnZJx_qrjLmQ1ScHRL0cPJn_1Y9JJ3ss61AIKuXps7eaasoKTs1wt31bzXz6PN92j8CPD3OiL49WtNLGXo9qfGPRV3PFSbLR_pEjWKzZI91L0umtuN9hqzZCT8JyMPFsNbOzDBbZt7fFkrX0LULyvPo1T3TVgvGJBruo4GAwNTstXWb0qOd2u7FyZXzVVpE2q07uleP-8i0hYSBWY7KuCu8VuI4rdFefLlsr_zSjw";
     var url = 'https://api.spotify.com/v1/me';
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
@@ -1658,12 +1659,17 @@ export class SpotifyComponent implements OnInit {
   }
 
   toggleGenre(genre){
-    genre.IsSelected = !genre.IsSelected;
+    // genre.IsSelected = !genre.IsSelected;
     if(this.selectedGenres.indexOf(genre) !== -1) {
       this.selectedGenres.splice(this.selectedGenres.indexOf(genre), 1);
     }else{
       this.selectedGenres.push(genre);
     }
+  }
+
+  removeGenre(genre){
+    genre.IsSelected = false;
+    this.selectedGenres.splice(this.selectedGenres.indexOf(genre), 1);
   }
 
   generatePlaylist(){
@@ -1682,16 +1688,15 @@ export class SpotifyComponent implements OnInit {
       let options = new RequestOptions({ headers: headers });
       var genreCount = newPlaylistOptions.Genre.length;
       var songsPerGenre = this.numberOfPlaylistSongs / genreCount;
-      console.log(songsPerGenre);
       for (var i=0;i < newPlaylistOptions.Genre.length;i++){
-        var url = this.apiBaseUrl + "q=genre:" + newPlaylistOptions.Genre[i].Name + "&type=track&market=AU&offset=0&limit=50";
+        var url = this.apiBaseUrl + "q=genre:" + newPlaylistOptions.Genre[i].Name.replace(/\s/g, '-') + "&type=track&market=AU&offset=0&limit=50";
         this.http.get(url, options)
           .subscribe(response => {
             var genreSongsAdded = 0;
             cnt++;
             var cnt2 = 0;
             response.json().tracks.items.forEach(element => {
-              if (cnt < songsPerGenre){
+              if (cnt2 < songsPerGenre){
                 var trackToAdd = {
                   id: element.id,
                   name: element.name,
@@ -1703,7 +1708,6 @@ export class SpotifyComponent implements OnInit {
             })
             genreSongsAdded += response.json().tracks.items.length;
             if (response.json().tracks.items.length < songsPerGenre && genreSongsAdded < songsPerGenre){
-              console.log("hit");
               this.addAdditionalSongs(options, songsPerGenre, genreSongsAdded, response.json(), newPlaylistOptions, cnt);
             }else{
               this.createPlaylist(cnt, newPlaylistOptions, options);
@@ -1753,7 +1757,6 @@ export class SpotifyComponent implements OnInit {
         .subscribe(response => {
       })
       tracksAdded += tracksToAdd.length;
-
       if (tracksAdded != trackCount){
         var tracksToAddCount = trackCount - tracksAdded;
         data.uris = allTracks.slice(100, allTracks.length);
@@ -1763,7 +1766,8 @@ export class SpotifyComponent implements OnInit {
       this.http.post(url, JSON.stringify(data), options)
         .subscribe(response => {
           this.loadingPlaylist = false;
-      })
+          this.playlistCreated = true;
+        })
     }
     
   }
@@ -1785,12 +1789,27 @@ export class SpotifyComponent implements OnInit {
       var data2 = {
         "uris": this.selectedTracks.uris
       }
+      if (this.selectedTracks.uris.length > this.numberOfPlaylistSongs){
+        this.selectedTracks.uris = this.selectedTracks.uris.slice(0, this.numberOfPlaylistSongs);
+      }
       this.http.post(url2, JSON.stringify(data), options)
         .subscribe(response => {
           var url3 = "https://api.spotify.com/v1/users/" + this.userData.id + "/playlists/" + response.json().id + "/tracks"
+          this.newPlaylistUrl = response.json().external_urls.spotify;
           this.addTracksToPlaylist(url3,this.userData.id, response.json().id,data2, options);
       })
     }
+  }
+
+  makeAnother(){
+    this.selectedTracks = {"uris":[]};
+    this.playlistCreated = false;
+    this.playlistName = "";
+    this.numberOfPlaylistSongs = 250;
+    this.selectedGenres.forEach(element => {
+      element.IsSelected = false;
+    });
+    this.selectedGenres = [];
   }
 
 }
