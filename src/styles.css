@@ -96,6 +96,9 @@ h3{
     font-size:30px;
     width:100%;
 }
+.playlist-generator input.invalid{
+    border-bottom-color:#FF0134;
+}
 input:focus{
     outline:none;
 }
@@ -142,7 +145,16 @@ input:focus{
     font-size:16px;
 }
 .playlist-generator-item-content mat-checkbox{
-    width:30%;
+    width:33%;
+    display: inline-block;
+    word-break: break-all;
+}
+.playlist-generator-item-content mat-checkbox label{
+    max-width: 100%;
+    display: inline-block;
+}
+.playlist-generator-item-content mat-checkbox .mat-checkbox-label{
+    max-width: 100%;
     display: inline-block;
 }
 .mat-checkbox-frame {
@@ -161,6 +173,7 @@ input:focus{
 }
 .searcher{
     position: relative;
+    margin-bottom: 20px;
 }
 .searcher .results{
 
@@ -231,4 +244,8 @@ input:focus{
     background-position: center;
     background-size:50px;
     background-repeat: no-repeat;
+}
+.genre-results{
+    position: relative;
+    height: 175px;
 }
