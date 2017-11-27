@@ -1,6 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
-@import "~@angular/material/prebuilt-themes/pink-bluegrey.css";
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
+.margin-top-25{
+    margin-top:25px;
+}
+.mat-chip:not(.mat-basic-chip):hover{
+    cursor: pointer;
+    position: relative;
+}
 *{
     font-family: 'Open Sans', sans-serif;
     box-sizing: border-box;
@@ -59,7 +66,11 @@ h3{
     top:50%;
     transform:translateY(-50%);
 }
+.mat-chip-list-wrapper{
+    margin:15px 0;
+}
 .search-container{
+    padding:20px;
     width:450px;
     display: inline-block;
     height: 80vh;
@@ -70,13 +81,16 @@ h3{
     position: fixed;
     overflow-y: scroll;
 }
+.search-container mat-checkbox{
+    width:45%;
+    display: inline-block;
+}
 .search-container h2{
     text-align: center;
 }
-
 .search-container  ul li{
     display: block;
-    padding:20px;
+    
 }
 .search-container ul li span{
     display: inline-block;
@@ -99,7 +113,12 @@ h3{
 .center{
     text-align: center;
 }
-
+.fw{
+    width:100%;
+}
+span.title{
+    margin-left:15px;
+}
 .half{
     vertical-align: top;
     display: inline-block;
@@ -213,6 +232,9 @@ input:focus{
     border-style: solid;
     border-color: rgba(0,0,0,.54);
 }
+mat-accordion{
+    margin-bottom:25px;
+}
 .playlist-generate-button-wrapper{
     margin-top:25px;
     text-align: center;
@@ -225,7 +247,11 @@ input:focus{
     margin-bottom: 20px;
     width:100%;
 }
-
+.searcher.col3{
+    width:30%;
+    display: inline-block;
+    margin-right: 2%;
+}
 .searcher .results ul{
     list-style: none;
     padding:0;

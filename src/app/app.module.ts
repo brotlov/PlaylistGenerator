@@ -9,6 +9,7 @@ import {HttpModule} from '@angular/http';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatInputModule} from '@angular/material/input';
+import {MatChipsModule} from '@angular/material/chips';
 
 
 import { AppComponent } from './app.component';
@@ -40,6 +41,7 @@ const appRoutes: Routes = [
     FormsModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    MatChipsModule,
     MatInputModule,
     MatExpansionModule,
     HttpModule,

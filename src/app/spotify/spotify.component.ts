@@ -15,6 +15,7 @@ import { Cookie } from 'ng2-cookies/ng2-cookies';
 })
 export class SpotifyComponent implements OnInit {
 
+  
   searchActive = false;
   relatedArtistList = {"artists":[]};
   newPlaylistUrl: string;
@@ -36,6 +37,10 @@ export class SpotifyComponent implements OnInit {
   responseData: any;
   apiBaseUrl = "https://api.spotify.com/v1/search?";
 
+  public search = {
+    "Genre": false,
+    "Artist": false,
+  }
   public genreList = [
       {Name: "Pop", IsSelected: false},
       {Name: "Dance Pop", IsSelected: false},
@@ -1633,7 +1638,7 @@ export class SpotifyComponent implements OnInit {
 
   ngOnInit() {
     // this.access_token = this.activatedRoute.snapshot.queryParams["access_token"];
-    this.access_token = "BQBXaBZaG1iZdhVSVLcRlnrTYdfwDWTJyrE1gbX7pHcyRqzvoim0F8xNEJ57sioarRdiwABbIP9i-Fx_Ur4CYOTS3IIke6EgnCjgyx9YkwUSBUoOMGOkYSqje7FAmRrXud6cE6lrMuCwqt9_AijMHZUr1zFPLQMGPAHBHxYDe95kkuI9_Ry7cIAqDzfLqqvCExLwcp9NkyaoicC3BtjwlfDUcreT_ERTrIx1FXiMzw39ZvAu";
+    this.access_token = "BQDL99hfMPcHKfGKwRPrNwHUOxaBL6Lk6UDFEPLkfaIcHMAfgpJZTpFzltbf3Yu0xmbxNDKEn6TYaUNoNTaHJzYx5uV47saHOFpMxTRM3YnAkhzxQvGoEAkwzwFNDbigDyX1-QvyTe3-aZB6IxQBi4w4uS8rBHV1kuVtWRlGuPsihZ4pg38H2-tpbfbHbVu6uyvf_3bDH3zPSbwRtVLfJ2cKED8ArtCQoZLkORWTC61XYHqK";
     var url = 'https://api.spotify.com/v1/me';
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
@@ -1651,6 +1656,8 @@ export class SpotifyComponent implements OnInit {
   }
 
   onFieldChange(query:string){
+    this.search.Genre = false;
+    this.search.Artist = true;
     if (query == ""){
       this.searchActive = false;
       this.loading = false;
@@ -1662,6 +1669,8 @@ export class SpotifyComponent implements OnInit {
   }
 
   onGenreFieldChange(query:string){
+    this.search.Artist = false;
+    this.search.Genre = true;
     if (query == ""){
       this.searchActive = false;
     }else{
