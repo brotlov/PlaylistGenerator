@@ -7,6 +7,7 @@ import {Http, Response} from '@angular/http';
 import {Headers, RequestOptions} from '@angular/http';
 import { Cookie } from 'ng2-cookies/ng2-cookies';
 
+
 @Component({
   selector: 'app-spotify',
   templateUrl: './spotify.component.html',
@@ -14,6 +15,7 @@ import { Cookie } from 'ng2-cookies/ng2-cookies';
 })
 export class SpotifyComponent implements OnInit {
 
+  searchActive = false;
   relatedArtistList = {"artists":[]};
   newPlaylistUrl: string;
   playlistCreated = false;
@@ -1583,6 +1585,7 @@ export class SpotifyComponent implements OnInit {
   public artistSearchResults = [];
   public selectedArtists = [];
   public selectedGenres = [];
+  public searchResults = [];
 
   constructor(private activatedRoute: ActivatedRoute,private router: Router,private http: Http) {
     
@@ -1592,7 +1595,7 @@ export class SpotifyComponent implements OnInit {
       .subscribe(model => {
         this.newArtist = model;
         // Call your function which calls API or do anything you would like do after a lag of 1 sec
-        this.loading = true;
+        
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');
         headers.append('Authorization', `Bearer ${this.access_token}`);
@@ -1604,15 +1607,16 @@ export class SpotifyComponent implements OnInit {
           .subscribe(response => {
               if (response.json().artists.items.length == 0){
                 this.errorMessage = "There were no matches found. Please try again";
-                this.artistSearchResults = [];
+                this.searchResults = [];
               }else{
                 this.errorMessage = "";
-                this.artistSearchResults = response.json().artists.items;
+                // this.artistSearchResults = response.json().artists.items;
+                this.searchResults = response.json().artists.items;
               }
               this.loading = false;
             });
         }else{
-          this.artistSearchResults = [];
+          this.searchResults = [];
           this.loading = false;
         }
     });
@@ -1629,7 +1633,7 @@ export class SpotifyComponent implements OnInit {
 
   ngOnInit() {
     // this.access_token = this.activatedRoute.snapshot.queryParams["access_token"];
-    this.access_token = "BQCpiQ-PYAYaSYhA8UJ9pLDxNnotKvgOKlilrqxysNI4egoK6Bz9QB6YH8FjnRnzR09Gbmkx15TiS4QH0OvUL_QCgGq1H_0XPerbdUuJSmLMRrTXYjpdpxsmw2aeSx4bMMXbGB59rN82CXShXtgx-G2BzF4_sZ3_Dvv6RzptgXl82XtE7ZzB7pFZA51IIGfl9v8P0m9MIfyt91NfRHFXswQ_Paz1XIuZ9dO32WCVSi7fKA";
+    this.access_token = "BQBXaBZaG1iZdhVSVLcRlnrTYdfwDWTJyrE1gbX7pHcyRqzvoim0F8xNEJ57sioarRdiwABbIP9i-Fx_Ur4CYOTS3IIke6EgnCjgyx9YkwUSBUoOMGOkYSqje7FAmRrXud6cE6lrMuCwqt9_AijMHZUr1zFPLQMGPAHBHxYDe95kkuI9_Ry7cIAqDzfLqqvCExLwcp9NkyaoicC3BtjwlfDUcreT_ERTrIx1FXiMzw39ZvAu";
     var url = 'https://api.spotify.com/v1/me';
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
@@ -1647,20 +1651,35 @@ export class SpotifyComponent implements OnInit {
   }
 
   onFieldChange(query:string){
+    if (query == ""){
+      this.searchActive = false;
+      this.loading = false;
+    }else{
+      this.searchActive = true;
+      this.loading = true;
+    }
     this.newArtistChanged.next(query);
   }
 
   onGenreFieldChange(query:string){
+    if (query == ""){
+      this.searchActive = false;
+    }else{
+      this.searchActive = true;
+    }
     this.genreLoading = true;
     this.newGenreChanged.next(query);
   }
 
   addArtist(artist){
+    artist.IsSelected = true;
     this.selectedArtists.push(artist);
   }
 
   removeArtist(artist){
-    this.selectedGenres.splice(this.selectedArtists.indexOf(artist), 1);
+    var index = this.selectedArtists.indexOf(artist);
+    artist.IsSelected = false;
+    this.selectedArtists.splice(index, 1);
   }
 
   toggleGenre(genre){

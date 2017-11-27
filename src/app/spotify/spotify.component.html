@@ -1,37 +1,37 @@
-<div *ngIf="playlistCreated" class="container sm playlist-completed">
+<div *ngIf="playlistCreated" class="container playlist-completed">
   <h2>Your playlist has been successfully created.</h2>
   <p><a [href]="newPlaylistUrl" target="_blank">Click here</a> to view your playlist, or <a (click)="makeAnother()" href="javascript:void(0)">click here</a> to make another one</p>
 </div>
-<div *ngIf="!playlistCreated" class="container sm playlist-generator">
+<div *ngIf="!playlistCreated" [ngClass]="['container' , 'playlist-generator', (searchActive == true) ? 'search-active' : '']">
   <div class="center">
     <input [ngClass]="{ 'invalid': playlistNameValid == false }" [(ngModel)]="playlistName" placeholder="Playlist Name" />
   </div>
+  <div *ngIf="loadingPlaylist" class="loader"></div>
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Artists
+        </mat-panel-title>
+        <mat-panel-description>
+          Type an artist to add to your playlist. By adding an artist, your playlist will contain songs from that artist, as well as songs from related artists.
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <mat-form-field class="searcher">
+        <input matInput type="text" [(ngModel)]="newArtist" (ngModelChange)="onFieldChange($event)" placeholder="Artist Name">
+      </mat-form-field>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <div class="selected-items">
+    <span (click)="removeArtist(s)" *ngFor="let s of selectedArtists">{{s.name}} <i class="material-icons">close</i></span>
+  </div>
   <div class="playlist-generator-body">
-    <div *ngIf="loadingPlaylist" class="loader"></div>
     <div class="playlist-generator-item">
       <h4>Artists</h4>
       <div class="playlist-generator-item-content">
         <p>Type an artist to add to your playlist. By adding an artist, your playlist will contain songs from that artist, as well as songs from related artists.</p>
-        <div class="searcher">
-          <input type="text" [(ngModel)]="newArtist" (ngModelChange)="onFieldChange($event)" placeholder="Artist Name"/>
-          <div class="results">
-            <div *ngIf="errorMessage != ''" class="error">
-              <p>{{errorMessage}}</p>
-            </div>
-            <ul [ngClass]="{ 'loading': loading == true }">
-                <div *ngIf="loading" class="loader"></div>
-                <li (click)="addArtist(artist)" *ngFor="let artist of artistSearchResults">
-                  <img height="160" *ngIf="artist.images.length != 0" [src]="artist.images[1].url"/>
-                  <img *ngIf="artist.images.length == 0" src="http://via.placeholder.com/160x160">
-                  <span>{{artist.name}}</span>
-                </li>
-            </ul>
-          </div>
-        </div>
       </div>
-      <div class="selected-items">
-        <span (click)="removeArtist(s)" *ngFor="let s of selectedArtists">{{s.name}} <i class="material-icons">close</i></span>
-      </div>
+      
     </div>
     <div class="playlist-generator-item">
       <h4>Genre</h4>
@@ -72,4 +72,24 @@
       <button (click)="generatePlaylist()" color="warn" mat-raised-button>Generate Playlist</button>
     </div>
   </div>
+</div>
+<div *ngIf="searchActive" class="search-container">
+  <h2>Search Results</h2>
+  <div *ngIf="errorMessage != ''" class="error">
+    <p>{{errorMessage}}</p>
+  </div>
+  <ul [ngClass]="{ 'loading': loading == true }">
+    <div *ngIf="loading" class="loader"></div>
+    <li *ngFor="let s of searchResults">
+      <div>
+        <img height="160" width="160" *ngIf="s.images.length != 0" [src]="s.images[1].url"/>
+        <img *ngIf="s.images.length == 0" src="http://via.placeholder.com/160x160">
+        <span>{{s.name}}</span>
+      </div>
+      <div>
+        <!--<mat-slider thumbLabel step="5" min="1" max="5" step="15" tickInterval="1"></mat-slider>-->
+        <button (click)="addArtist(s)" [disabled]="s.IsSelected == true" color="warn" mat-raised-button>Add to Playlist</button>
+      </div>
+    </li>
+  </ul>
 </div>

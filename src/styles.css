@@ -42,6 +42,12 @@ h3{
     font-size:0;
     height:70vh;
 }
+.container.search-active{
+    width:700px;
+    margin-right: 50px;
+    margin-left:18.4%;
+    display: inline-block;
+}
 .container.fw.short{
     height: auto;
 }
@@ -52,6 +58,40 @@ h3{
     position: relative;
     top:50%;
     transform:translateY(-50%);
+}
+.search-container{
+    width:450px;
+    display: inline-block;
+    height: 80vh;
+    margin-top:50px;
+    vertical-align: top;
+    border:1px solid #191414;
+    border-radius: 6px;
+    position: fixed;
+    overflow-y: scroll;
+}
+.search-container h2{
+    text-align: center;
+}
+
+.search-container  ul li{
+    display: block;
+    padding:20px;
+}
+.search-container ul li span{
+    display: inline-block;
+}
+.search-container  ul li div:first-child{
+    width:55%;
+    text-align: center;
+}
+.search-container  ul li div{
+    display: inline-block;
+    width:40%;
+    vertical-align: middle;
+}
+.search-container ul li div mat-slider{
+    width:100%;
 }
 .half .v-center{
     top:35%;
@@ -99,13 +139,7 @@ h3{
 .playlist-completed a{
 
 }
-.playlist-generator input{
-    border:none;
-    border-bottom:3px solid #191414;
-    padding:10px;
-    font-size:30px;
-    width:100%;
-}
+
 .playlist-generator input.invalid{
     border-bottom-color:#FF0134;
 }
@@ -189,10 +223,9 @@ input:focus{
 .searcher{
     position: relative;
     margin-bottom: 20px;
+    width:100%;
 }
-.searcher .results{
 
-}
 .searcher .results ul{
     list-style: none;
     padding:0;
