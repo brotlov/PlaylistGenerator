@@ -10,7 +10,8 @@ var cookieParser = require('cookie-parser');
 
 var client_id = 'd4962bb9984847e2aaa60cff7ce2aaeb'; // Your client id
 var client_secret = '37419976fb114830acd42e85f93d778d'; // Your secret
-var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
+// var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
+var redirect_uri = 'https://hidden-shore-39936.herokuapp.com//callback'; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters
@@ -45,8 +46,6 @@ app.use(express.static(__dirname + '/public'))
 
 // Angular DIST output folder
 app.use(express.static(path.join(__dirname, 'dist')));
-
-
 
 app.get('/spotifyLogin', function(req, res) {
 
