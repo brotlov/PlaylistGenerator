@@ -2181,6 +2181,7 @@ export class SpotifyComponent implements OnInit {
               }
           });
         }
+
         //Create playlist, and add selected tracks to playlist
         this.createPlaylist(cnt, parameterCount, options)
       }else{
@@ -2320,7 +2321,6 @@ export class SpotifyComponent implements OnInit {
         var index = 0;
         var repeat = false;
         if (i == (this.selectedArtists.length - 1)){
-          console.log(this.relatedArtistList.artists);
           this.relatedArtistList.artists.forEach(element => {
             if (cnt2 == 0){
               if (this.relatedArtistList.artists[index + 1] != undefined){
@@ -2350,12 +2350,13 @@ export class SpotifyComponent implements OnInit {
             name: element.name,
             artist: element.artists[0].name
           }
-          artistSongs.push("spotify:track:" + trackToAdd.id);
+          if (this.selectedTracks.uris.filter(e => e == "spotify:track:" + trackToAdd.id).length == 0) {
+              artistSongs.push("spotify:track:" + trackToAdd.id);
+            }
         })
         this.shufflePlaylist(artistSongs);
         artistSongs = artistSongs.slice(0, mainArtistSongTotal);
         this.selectedTracks.uris = this.selectedTracks.uris.concat(artistSongs);
-        console.log(this.selectedTracks.uris);
         if (repeat){
           var url2 = "https://api.spotify.com/v1/artists/" + this.selectedArtists[i].id  + "/related-artists";
           this.getRelatedArtists(i, options, numberOfRelatedArtistsPerMainArtist,url2,artistSongs,mainArtistSongTotal,numberOfRelatedArtistSongs);

@@ -91,7 +91,7 @@
           <mat-chip-list *ngIf="excludedArtists.length > 0">
             <mat-chip (click)="removeArtist(s, 'exclude')" *ngFor="let s of excludedArtists" selected="true" color="primary">{{s.name}} <i class="material-icons">close</i></mat-chip>
           </mat-chip-list>
-          <mat-expansion-panel>
+          <!--<mat-expansion-panel>
             <mat-expansion-panel-header>
               <mat-panel-title>
                 <i class="material-icons">list</i> 
@@ -104,7 +104,7 @@
             <mat-form-field class="searcher">
               <input matInput type="text" [(ngModel)]="genreExclusionString" (ngModelChange)="onGenreFieldChange($event, 'exclude')" placeholder="Search for a Genre">
             </mat-form-field>
-          </mat-expansion-panel>
+          </mat-expansion-panel>-->
           <mat-chip-list *ngIf="excludedGenres.length > 0">
             <mat-chip (click)="removeGenre(s,'exclude')" *ngFor="let s of excludedGenres" selected="true" color="primary">{{s.Name}} <i class="material-icons">close</i></mat-chip>
           </mat-chip-list>

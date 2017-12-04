@@ -50,7 +50,7 @@ h3{
 .container.fw{
     width:100%;
     font-size:0;
-    height:70vh;
+    height:60vh;
 }
 .playlist-generator.search-active{
     width:700px;
@@ -58,7 +58,7 @@ h3{
     display: inline-block;
 }
 .container.fw.short{
-    height: auto;
+    height: 10vh;
 }
 .container.sm{
     width:650px;
