@@ -9,7 +9,7 @@ var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
 var client_id = 'd4962bb9984847e2aaa60cff7ce2aaeb'; // Your client id
-var client_secret = '[SECRET]'; // Your secret
+var client_secret = '37419976fb114830acd42e85f93d778d'; // Your secret
 var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
 
 /**
@@ -64,6 +64,21 @@ app.get('/spotifyLogin', function(req, res) {
       state: state
     }));
 });
+
+const forceSSL = function() {
+  return function (req, res, next) {
+    if (req.headers['x-forwarded-proto'] !== 'https') {
+      return res.redirect(
+       ['https://', req.get('Host'), req.url].join('')
+      );
+    }
+    next();
+  }
+}
+// Instruct the app
+// to use the forceSSL
+// middleware
+app.use(forceSSL());
 
 app.get('/callback', function(req, res) {
 

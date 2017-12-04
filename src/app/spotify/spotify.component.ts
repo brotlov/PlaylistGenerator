@@ -15,7 +15,8 @@ import { Cookie } from 'ng2-cookies/ng2-cookies';
 })
 export class SpotifyComponent implements OnInit {
 
-  
+  applicationError = "";
+  excluding = false;
   searchActive = false;
   relatedArtistList = {"artists":[]};
   newPlaylistUrl: string;
@@ -24,7 +25,7 @@ export class SpotifyComponent implements OnInit {
   numberOfPlaylistSongs = 250;
   playlistNameValid: boolean;
   genreLoading = false;
-  playlistName = "test";
+  playlistName = "";
   userData: any;
   errorMessage: string;
   newArtist: string;
@@ -1589,8 +1590,389 @@ export class SpotifyComponent implements OnInit {
   public filteredGenreResults = [];
   public artistSearchResults = [];
   public selectedArtists = [];
+  // public selectedArtists = [
+  //   {
+  //     "external_urls": {
+  //       "spotify": "https://open.spotify.com/artist/4UXqAaa6dQYAk18Lv7PEgX"
+  //     },
+  //     "followers": {
+  //       "href": null,
+  //       "total": 3498492
+  //     },
+  //     "genres": [
+  //       "emo",
+  //       "modern rock",
+  //       "pop punk"
+  //     ],
+  //     "href": "https://api.spotify.com/v1/artists/4UXqAaa6dQYAk18Lv7PEgX",
+  //     "id": "4UXqAaa6dQYAk18Lv7PEgX",
+  //     "images": [
+  //       {
+  //         "height": 640,
+  //         "url": "https://i.scdn.co/image/d621cb41aac5fbc406f124bae66c184d58205d5f",
+  //         "width": 640
+  //       },
+  //       {
+  //         "height": 320,
+  //         "url": "https://i.scdn.co/image/90970cbcdd67b4c11b46ffd65d0b2967c3b1bbda",
+  //         "width": 320
+  //       },
+  //       {
+  //         "height": 160,
+  //         "url": "https://i.scdn.co/image/205dad877133b459c8d448ee938b869cfc63bb0c",
+  //         "width": 160
+  //       }
+  //     ],
+  //     "name": "Fall Out Boy",
+  //     "popularity": 87,
+  //     "type": "artist",
+  //     "uri": "spotify:artist:4UXqAaa6dQYAk18Lv7PEgX",
+  //     "IsSelected": true
+  //   },
+  //   {
+  //     "external_urls": {
+  //       "spotify": "https://open.spotify.com/artist/4NiJW4q9ichVqL1aUsgGAN"
+  //     },
+  //     "followers": {
+  //       "href": null,
+  //       "total": 1034987
+  //     },
+  //     "genres": [
+  //       "alternative metal",
+  //       "metalcore",
+  //       "pop punk",
+  //       "rap metal",
+  //       "screamo"
+  //     ],
+  //     "href": "https://api.spotify.com/v1/artists/4NiJW4q9ichVqL1aUsgGAN",
+  //     "id": "4NiJW4q9ichVqL1aUsgGAN",
+  //     "images": [
+  //       {
+  //         "height": 627,
+  //         "url": "https://i.scdn.co/image/9a3b98dc87627c63a08a56176048dce612ded8e7",
+  //         "width": 640
+  //       },
+  //       {
+  //         "height": 314,
+  //         "url": "https://i.scdn.co/image/003def94d10fbb8d2f598f794dfde23b2eb4c4e2",
+  //         "width": 320
+  //       },
+  //       {
+  //         "height": 157,
+  //         "url": "https://i.scdn.co/image/f7cbfeb5d4ee79452669281dfbea2ea783a3cc84",
+  //         "width": 160
+  //       }
+  //     ],
+  //     "name": "A Day To Remember",
+  //     "popularity": 76,
+  //     "type": "artist",
+  //     "uri": "spotify:artist:4NiJW4q9ichVqL1aUsgGAN",
+  //     "IsSelected": true
+  //   },
+  //   {
+  //     "external_urls": {
+  //       "spotify": "https://open.spotify.com/artist/6FBDaR13swtiWwGhX1WQsP"
+  //     },
+  //     "followers": {
+  //       "href": null,
+  //       "total": 2971250
+  //     },
+  //     "genres": [
+  //       "heavy christmas",
+  //       "modern rock",
+  //       "pop punk",
+  //       "punk",
+  //       "punk christmas"
+  //     ],
+  //     "href": "https://api.spotify.com/v1/artists/6FBDaR13swtiWwGhX1WQsP",
+  //     "id": "6FBDaR13swtiWwGhX1WQsP",
+  //     "images": [
+  //       {
+  //         "height": 639,
+  //         "url": "https://i.scdn.co/image/e51a4258ff5f1a8c5dc9809be9514a5501cd0a0f",
+  //         "width": 640
+  //       },
+  //       {
+  //         "height": 320,
+  //         "url": "https://i.scdn.co/image/c346bb02b40131425c2da553623926fd70dfe216",
+  //         "width": 320
+  //       },
+  //       {
+  //         "height": 160,
+  //         "url": "https://i.scdn.co/image/40ca6fdf714cfd6accb9a21f2cd2b5c9fd755dad",
+  //         "width": 160
+  //       }
+  //     ],
+  //     "name": "blink-182",
+  //     "popularity": 83,
+  //     "type": "artist",
+  //     "uri": "spotify:artist:6FBDaR13swtiWwGhX1WQsP",
+  //     "IsSelected": true
+  //   },
+  //   {
+  //     "external_urls": {
+  //       "spotify": "https://open.spotify.com/artist/1XpDYCrUJnvCo9Ez6yeMWh"
+  //     },
+  //     "followers": {
+  //       "href": null,
+  //       "total": 631165
+  //     },
+  //     "genres": [
+  //       "alternative metal",
+  //       "alternative rock",
+  //       "comedy rock",
+  //       "comic",
+  //       "heavy christmas",
+  //       "post-grunge",
+  //       "rock"
+  //     ],
+  //     "href": "https://api.spotify.com/v1/artists/1XpDYCrUJnvCo9Ez6yeMWh",
+  //     "id": "1XpDYCrUJnvCo9Ez6yeMWh",
+  //     "images": [
+  //       {
+  //         "height": 1335,
+  //         "url": "https://i.scdn.co/image/3670d9324fb50e6ba10173c6e00ca73c3fcfe47d",
+  //         "width": 1000
+  //       },
+  //       {
+  //         "height": 854,
+  //         "url": "https://i.scdn.co/image/71a94047b1c3310230ce84f4f4f387153f119bc3",
+  //         "width": 640
+  //       },
+  //       {
+  //         "height": 267,
+  //         "url": "https://i.scdn.co/image/8fab4ea42f21335b63dc8d45753645e74cd84869",
+  //         "width": 200
+  //       },
+  //       {
+  //         "height": 85,
+  //         "url": "https://i.scdn.co/image/fbc4af6d73d5918da0f3e0f7547d839c3693c571",
+  //         "width": 64
+  //       }
+  //     ],
+  //     "name": "Tenacious D",
+  //     "popularity": 69,
+  //     "type": "artist",
+  //     "uri": "spotify:artist:1XpDYCrUJnvCo9Ez6yeMWh",
+  //     "IsSelected": true
+  //   },
+  //   {
+  //     "external_urls": {
+  //       "spotify": "https://open.spotify.com/artist/7Ln80lUS6He07XvHI8qqHH"
+  //     },
+  //     "followers": {
+  //       "href": null,
+  //       "total": 4608893
+  //     },
+  //     "genres": [
+  //       "garage rock",
+  //       "indie rock",
+  //       "modern rock",
+  //       "permanent wave",
+  //       "sheffield indie"
+  //     ],
+  //     "href": "https://api.spotify.com/v1/artists/7Ln80lUS6He07XvHI8qqHH",
+  //     "id": "7Ln80lUS6He07XvHI8qqHH",
+  //     "images": [
+  //       {
+  //         "height": 1333,
+  //         "url": "https://i.scdn.co/image/c488bf987b2f716a539a768a102855450345113d",
+  //         "width": 1000
+  //       },
+  //       {
+  //         "height": 853,
+  //         "url": "https://i.scdn.co/image/b30c0e39cfa70b2124b9d0d24e83761ef48e5540",
+  //         "width": 640
+  //       },
+  //       {
+  //         "height": 267,
+  //         "url": "https://i.scdn.co/image/e1f00ceabce8dd0480bad7e873993082d9ac3fe9",
+  //         "width": 200
+  //       },
+  //       {
+  //         "height": 85,
+  //         "url": "https://i.scdn.co/image/eba02729ec372fd9954cafd3fd71950bb8fc385f",
+  //         "width": 64
+  //       }
+  //     ],
+  //     "name": "Arctic Monkeys",
+  //     "popularity": 86,
+  //     "type": "artist",
+  //     "uri": "spotify:artist:7Ln80lUS6He07XvHI8qqHH",
+  //     "IsSelected": true
+  //   },
+  //   {
+  //     "external_urls": {
+  //       "spotify": "https://open.spotify.com/artist/0epOFNiUfyON9EYx7Tpr6V"
+  //     },
+  //     "followers": {
+  //       "href": null,
+  //       "total": 1774715
+  //     },
+  //     "genres": [
+  //       "alternative rock",
+  //       "blues-rock",
+  //       "garage rock",
+  //       "indie pop",
+  //       "indie rock",
+  //       "modern rock",
+  //       "permanent wave",
+  //       "rock"
+  //     ],
+  //     "href": "https://api.spotify.com/v1/artists/0epOFNiUfyON9EYx7Tpr6V",
+  //     "id": "0epOFNiUfyON9EYx7Tpr6V",
+  //     "images": [
+  //       {
+  //         "height": 640,
+  //         "url": "https://i.scdn.co/image/83b70d344ea18f84f6fb654179e6d14ce886b716",
+  //         "width": 640
+  //       },
+  //       {
+  //         "height": 320,
+  //         "url": "https://i.scdn.co/image/650a32fcd5fbb68d8db676d33b54b54b4828e255",
+  //         "width": 320
+  //       },
+  //       {
+  //         "height": 160,
+  //         "url": "https://i.scdn.co/image/32978a5e54416c666c529ad4772ea266c6df2d1d",
+  //         "width": 160
+  //       }
+  //     ],
+  //     "name": "The Strokes",
+  //     "popularity": 79,
+  //     "type": "artist",
+  //     "uri": "spotify:artist:0epOFNiUfyON9EYx7Tpr6V",
+  //     "IsSelected": true
+  //   },
+  //   {
+  //     "external_urls": {
+  //       "spotify": "https://open.spotify.com/artist/53XhwfbYqKCa1cC15pYq2q"
+  //     },
+  //     "followers": {
+  //       "href": null,
+  //       "total": 6394283
+  //     },
+  //     "genres": [
+  //       "modern rock",
+  //       "pop",
+  //       "vegas indie"
+  //     ],
+  //     "href": "https://api.spotify.com/v1/artists/53XhwfbYqKCa1cC15pYq2q",
+  //     "id": "53XhwfbYqKCa1cC15pYq2q",
+  //     "images": [
+  //       {
+  //         "height": 640,
+  //         "url": "https://i.scdn.co/image/de3c2c4f4e822edab6fd8c2103102413502635ea",
+  //         "width": 640
+  //       },
+  //       {
+  //         "height": 320,
+  //         "url": "https://i.scdn.co/image/0242e9f3cdaeb9abd0c9724248213c8e364fc921",
+  //         "width": 320
+  //       },
+  //       {
+  //         "height": 160,
+  //         "url": "https://i.scdn.co/image/affb5c546adf0b6f718282528e56f24854026be1",
+  //         "width": 160
+  //       }
+  //     ],
+  //     "name": "Imagine Dragons",
+  //     "popularity": 94,
+  //     "type": "artist",
+  //     "uri": "spotify:artist:53XhwfbYqKCa1cC15pYq2q",
+  //     "IsSelected": true
+  //   },
+  //   {
+  //     "external_urls": {
+  //       "spotify": "https://open.spotify.com/artist/7jy3rLJdDQY21OgRLCZ9sD"
+  //     },
+  //     "followers": {
+  //       "href": null,
+  //       "total": 3379682
+  //     },
+  //     "genres": [
+  //       "alternative metal",
+  //       "alternative rock",
+  //       "modern rock",
+  //       "permanent wave",
+  //       "pop rock",
+  //       "post-grunge",
+  //       "rock"
+  //     ],
+  //     "href": "https://api.spotify.com/v1/artists/7jy3rLJdDQY21OgRLCZ9sD",
+  //     "id": "7jy3rLJdDQY21OgRLCZ9sD",
+  //     "images": [
+  //       {
+  //         "height": 640,
+  //         "url": "https://i.scdn.co/image/c1a1b1ba6e7f40a1ac584481bdd6b3c2f305a35c",
+  //         "width": 640
+  //       },
+  //       {
+  //         "height": 320,
+  //         "url": "https://i.scdn.co/image/bc43602fa69d0b7ad5a86c621d5f5c63ba327747",
+  //         "width": 320
+  //       },
+  //       {
+  //         "height": 160,
+  //         "url": "https://i.scdn.co/image/45fa252dbb712dffd078f0d0930379bf41111cf2",
+  //         "width": 160
+  //       }
+  //     ],
+  //     "name": "Foo Fighters",
+  //     "popularity": 85,
+  //     "type": "artist",
+  //     "uri": "spotify:artist:7jy3rLJdDQY21OgRLCZ9sD",
+  //     "IsSelected": true
+  //   },
+  //   {
+  //     "external_urls": {
+  //       "spotify": "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+  //     },
+  //     "followers": {
+  //       "href": null,
+  //       "total": 3153001
+  //     },
+  //     "genres": [
+  //       "alternative metal",
+  //       "alternative rock",
+  //       "garage rock",
+  //       "indie rock",
+  //       "modern rock",
+  //       "permanent wave",
+  //       "piano rock",
+  //       "post-grunge",
+  //       "rock"
+  //     ],
+  //     "href": "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+  //     "id": "12Chz98pHFMPJEknJQMWvI",
+  //     "images": [
+  //       {
+  //         "height": 640,
+  //         "url": "https://i.scdn.co/image/19ac88c7aec1f68aa6e207aff29efa15d37336a7",
+  //         "width": 640
+  //       },
+  //       {
+  //         "height": 320,
+  //         "url": "https://i.scdn.co/image/7ad2128db73a2814a1a96498404a5d9aabb4c15c",
+  //         "width": 320
+  //       },
+  //       {
+  //         "height": 160,
+  //         "url": "https://i.scdn.co/image/f026a6204c28907e43e833eaa1820f9b674295ca",
+  //         "width": 160
+  //       }
+  //     ],
+  //     "name": "Muse",
+  //     "popularity": 81,
+  //     "type": "artist",
+  //     "uri": "spotify:artist:12Chz98pHFMPJEknJQMWvI",
+  //     "IsSelected": true
+  //   }
+  // ];
   public selectedGenres = [];
   public searchResults = [];
+  public excludedArtists = [];
+  public excludedGenres = [];
 
   constructor(private activatedRoute: ActivatedRoute,private router: Router,private http: Http) {
     
@@ -1598,16 +1980,13 @@ export class SpotifyComponent implements OnInit {
       .debounceTime(1000) // wait 1 sec after the last event before emitting last event
       .distinctUntilChanged() // only emit if value is different from previous value
       .subscribe(model => {
-        this.newArtist = model;
-        // Call your function which calls API or do anything you would like do after a lag of 1 sec
         
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');
         headers.append('Authorization', `Bearer ${this.access_token}`);
         let options = new RequestOptions({ headers: headers });
-        var url = this.apiBaseUrl + "q=" + this.newArtist.replace(" ", "%20") + "&type=artist";
-        if (this.newArtist != ""){
-          
+        var url = this.apiBaseUrl + "q=" + model.replace(" ", "%20") + "&type=artist";
+        if (model != ""){
           http.get(url, options)
           .subscribe(response => {
               if (response.json().artists.items.length == 0){
@@ -1630,15 +2009,14 @@ export class SpotifyComponent implements OnInit {
       .distinctUntilChanged() // only emit if value is different from previous value
       .subscribe(model => {
         // this.filteredGenreResults = [];
-        this.genreSearchString = model.toLowerCase();
-        this.filteredGenreResults = this.completeGenreList.filter(item => item.Name.toLowerCase().indexOf(this.genreSearchString.toLowerCase()) !== -1).slice(0, 21);
+        this.filteredGenreResults = this.completeGenreList.filter(item => item.Name.toLowerCase().indexOf(model.toLowerCase()) !== -1).slice(0, 21);
         this.genreLoading = false;
     });
   }
 
   ngOnInit() {
     // this.access_token = this.activatedRoute.snapshot.queryParams["access_token"];
-    this.access_token = "BQDL99hfMPcHKfGKwRPrNwHUOxaBL6Lk6UDFEPLkfaIcHMAfgpJZTpFzltbf3Yu0xmbxNDKEn6TYaUNoNTaHJzYx5uV47saHOFpMxTRM3YnAkhzxQvGoEAkwzwFNDbigDyX1-QvyTe3-aZB6IxQBi4w4uS8rBHV1kuVtWRlGuPsihZ4pg38H2-tpbfbHbVu6uyvf_3bDH3zPSbwRtVLfJ2cKED8ArtCQoZLkORWTC61XYHqK";
+    this.access_token = "BQCVYpP2TPL-oR8RVB4yLSt7Tj8fToO7KlzwbgHgYKWPRtU71LeOri2YGzJ2nrVi7cawxAGBHegcFWb8rgsarsGOiqyOpncmG30hGnRezscKfZ0n12S4xhe-J257lJ0tdQklEV7UqerqAUC-_6xSmu48G5cm_MqCmMpX4Mohe3L4lU-xlsGpCb1AR2vCiNE6vUjQlYQXRSrjnH6dHCcbCPE4x-ulS_Tjaf8W9WN3C-VxXT0S";
     var url = 'https://api.spotify.com/v1/me';
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
@@ -1649,13 +2027,22 @@ export class SpotifyComponent implements OnInit {
       .subscribe(response => {
         this.userData = response.json();
         this.loading = false;
-      });
+      },
+      (error => {
+        console.log(error.json());
+      })
+    )
     // if (access_token == undefined){
     //   this.router.navigate(['/login'])
     // }
   }
 
-  onFieldChange(query:string){
+  onFieldChange(query:string, addOrExclude:string){
+    if (addOrExclude == 'add'){
+      this.excluding = false;
+    }else{
+      this.excluding = true;
+    }
     this.search.Genre = false;
     this.search.Artist = true;
     if (query == ""){
@@ -1668,7 +2055,12 @@ export class SpotifyComponent implements OnInit {
     this.newArtistChanged.next(query);
   }
 
-  onGenreFieldChange(query:string){
+  onGenreFieldChange(query:string,addOrExclude:string){
+    if (addOrExclude == 'add'){
+      this.excluding = false;
+    }else{
+      this.excluding = true;
+    }
     this.search.Artist = false;
     this.search.Genre = true;
     if (query == ""){
@@ -1681,92 +2073,120 @@ export class SpotifyComponent implements OnInit {
   }
 
   addArtist(artist){
-    artist.IsSelected = true;
-    this.selectedArtists.push(artist);
-  }
-
-  removeArtist(artist){
-    var index = this.selectedArtists.indexOf(artist);
-    artist.IsSelected = false;
-    this.selectedArtists.splice(index, 1);
-  }
-
-  toggleGenre(genre){
-    // genre.IsSelected = !genre.IsSelected;
-    if(this.selectedGenres.indexOf(genre) !== -1) {
-      this.selectedGenres.splice(this.selectedGenres.indexOf(genre), 1);
+    if (!this.excluding){
+      artist.IsSelected = true;
+      this.selectedArtists.push(artist);
     }else{
-      this.selectedGenres.push(genre);
+      artist.IsSelected = true;
+      this.excludedArtists.push(artist);
     }
   }
 
+  removeArtist(artist){
+    if (!this.excluding){
+      var index = this.selectedArtists.indexOf(artist);
+      artist.IsSelected = false;
+      this.selectedArtists.splice(index, 1);
+    }else{
+      var index = this.excludedArtists.indexOf(artist);
+      artist.IsSelected = false;
+      this.excludedArtists.splice(index, 1);
+    }
+  }
+
+  toggleGenre(genre){
+    if (!this.excluding){
+      if(this.selectedGenres.indexOf(genre) !== -1) {
+        this.selectedGenres.splice(this.selectedGenres.indexOf(genre), 1);
+      }else{
+        this.selectedGenres.push(genre);
+      }
+    }else{
+      if(this.excludedGenres.indexOf(genre) !== -1) {
+        this.excludedGenres.splice(this.excludedGenres.indexOf(genre), 1);
+      }else{
+        this.excludedGenres.push(genre);
+      }
+    }
+    
+  }
+
   removeGenre(genre){
-    genre.IsSelected = false;
-    this.selectedGenres.splice(this.selectedGenres.indexOf(genre), 1);
+    if (!this.excluding){
+      genre.IsSelected = false;
+      this.selectedGenres.splice(this.selectedGenres.indexOf(genre), 1);
+    }else{
+      genre.IsSelected = false;
+      this.excludedGenres.splice(this.excludedGenres.indexOf(genre), 1);
+    }
   }
 
   generatePlaylist(){
-    if (this.playlistName != "" && this.playlistName != undefined){
-      this.selectedTracks = {"uris":[]};
-      var cnt = 0;
-      this.playlistNameValid = true;
-      this.loadingPlaylist = true;
-      var playlistId = "";
-      
-      let headers = new Headers();
-      headers.append('Content-Type', 'application/json');
-      headers.append('Authorization', `Bearer ${this.access_token}`);
-      let options = new RequestOptions({ headers: headers });
+    
+    if (this.selectedArtists.length == 0 && this.selectedGenres.length == 0){
+      this.applicationError = "Please select at least 1 Artist or Genre to be added to your playlist";
+    }
+    else{
+      if (this.playlistName != "" && this.playlistName != undefined){
+        this.selectedTracks = {"uris":[]};
+        var cnt = 0;
+        this.playlistNameValid = true;
+        this.loadingPlaylist = true;
+        var playlistId = "";
+        
+        let headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Authorization', `Bearer ${this.access_token}`);
+        let options = new RequestOptions({ headers: headers });
 
-      var artistCount = this.selectedArtists.length;
-      var genreCount = this.selectedGenres.length;
-      var parameterCount = artistCount + genreCount;
-      var songsPerParameter = this.numberOfPlaylistSongs / parameterCount;
-      var artistSongs = [];
-      var mainArtistRelatedArtistRatio = .25;
-      var mainArtistSongTotal = Math.ceil(songsPerParameter * mainArtistRelatedArtistRatio);
-      var numberOfRelatedArtistsPerMainArtist = 20;
-      var numberOfRelatedArtistSongs = Math.ceil((songsPerParameter * (1 - mainArtistRelatedArtistRatio)) / numberOfRelatedArtistsPerMainArtist);
+        var artistCount = this.selectedArtists.length;
+        var genreCount = this.selectedGenres.length;
+        var parameterCount = artistCount + genreCount;
+        var songsPerParameter = this.numberOfPlaylistSongs / parameterCount;
+        var artistSongs = [];
+        var mainArtistRelatedArtistRatio = .25;
+        var mainArtistSongTotal = Math.ceil(songsPerParameter * mainArtistRelatedArtistRatio);
+        var numberOfRelatedArtistsPerMainArtist = 20;
+        var numberOfRelatedArtistSongs = Math.ceil((songsPerParameter * (1 - mainArtistRelatedArtistRatio)) / numberOfRelatedArtistsPerMainArtist);
 
-      //Add artists and related artists
-      for (var i=0;i < this.selectedArtists.length;i++){
-        cnt++;
-        var url = this.apiBaseUrl + "q=artist:" + this.selectedArtists[i].name.replace(/\s/g, '-') + "&type=track&market=AU&offset=0&limit=50";
-        var repeat = true;
-        this.addArtistSongs(url, options,artistSongs,mainArtistSongTotal,i,numberOfRelatedArtistsPerMainArtist,numberOfRelatedArtistSongs, repeat);
-      }
-      
-      //Add genres
-      for (var i=0;i < this.selectedGenres.length;i++){
-        cnt++;
-        var url = this.apiBaseUrl + "q=genre:" + this.selectedGenres[i].Name.replace(/\s/g, '-') + "&type=track&market=AU&offset=0&limit=50";
-        this.http.get(url, options)
-          .subscribe(response => {
-            var genreSongsAdded = 0;
-            var cnt2 = 0;
-            response.json().tracks.items.forEach(element => {
-              if (cnt2 < songsPerParameter){
-                var trackToAdd = {
-                  id: element.id,
-                  name: element.name,
-                  artist: element.artists[0].name
+        //Add artists and related artists
+        for (var i=0;i < this.selectedArtists.length;i++){
+          cnt++;
+          var url = this.apiBaseUrl + "q=artist:" + this.selectedArtists[i].name.replace(/\s/g, '-') + "&type=track&market=AU&offset=0&limit=50";
+          var repeat = true;
+          this.addArtistSongs(url, options,artistSongs,mainArtistSongTotal,i,numberOfRelatedArtistsPerMainArtist,numberOfRelatedArtistSongs, repeat);
+        }
+        
+        //Add genres
+        for (var i=0;i < this.selectedGenres.length;i++){
+          cnt++;
+          var url = this.apiBaseUrl + "q=genre:" + this.selectedGenres[i].Name.replace(/\s/g, '-') + "&type=track&market=AU&offset=0&limit=50";
+          this.http.get(url, options)
+            .subscribe(response => {
+              var genreSongsAdded = 0;
+              var cnt2 = 0;
+              response.json().tracks.items.forEach(element => {
+                if (cnt2 < songsPerParameter){
+                  var trackToAdd = {
+                    id: element.id,
+                    name: element.name,
+                    artist: element.artists[0].name
+                  }
+                  this.selectedTracks.uris.push("spotify:track:" + trackToAdd.id);
+                  cnt2++;
                 }
-                this.selectedTracks.uris.push("spotify:track:" + trackToAdd.id);
-                cnt2++;
+              })
+              genreSongsAdded += response.json().tracks.items.length;
+              if (response.json().tracks.items.length < songsPerParameter && genreSongsAdded < songsPerParameter){
+                this.addAdditionalSongs(options, songsPerParameter, genreSongsAdded, response.json(), this.selectedGenres, cnt);
               }
-            })
-            genreSongsAdded += response.json().tracks.items.length;
-            if (response.json().tracks.items.length < songsPerParameter && genreSongsAdded < songsPerParameter){
-              this.addAdditionalSongs(options, songsPerParameter, genreSongsAdded, response.json(), this.selectedGenres, cnt);
-            }
-        });
+          });
+        }
+        //Create playlist, and add selected tracks to playlist
+        this.createPlaylist(cnt, parameterCount, options)
+      }else{
+        this.playlistNameValid = false;
       }
-
-      //Create playlist, and add selected tracks to playlist
-      this.createPlaylist(cnt, parameterCount, options)
-
-    }else{
-      this.playlistNameValid = false;
     }
   }
 
@@ -1818,6 +2238,7 @@ export class SpotifyComponent implements OnInit {
         .subscribe(response => {
           this.loadingPlaylist = false;
           this.playlistCreated = true;
+          this.searchActive = false;
         })
     }
     
@@ -1831,13 +2252,14 @@ export class SpotifyComponent implements OnInit {
   }
 
   createPlaylist(cnt, parameterCount, options){
+    console.log("Making")
     var cnt2 = 0;
     if (this.selectedTracks.uris.length == 0){
       if (cnt2 == 3){
         console.log("Timeout. Please try again")
       }else{
         cnt2++;
-        setTimeout(() => this.createPlaylist(cnt, parameterCount, options), 3000)
+        setTimeout(() => this.createPlaylist(cnt, parameterCount, options), 10000)
       }
     }else{
       this.shufflePlaylist(this.selectedTracks.uris);
@@ -1857,7 +2279,13 @@ export class SpotifyComponent implements OnInit {
             var url3 = "https://api.spotify.com/v1/users/" + this.userData.id + "/playlists/" + response.json().id + "/tracks"
             this.newPlaylistUrl = response.json().external_urls.spotify;
             this.addTracksToPlaylist(url3,this.userData.id, response.json().id,data2, options);
+        },
+        (error => {
+          if (error.json().error.message = "API rate limit exceeded"){
+            setTimeout(() => this.createPlaylist(cnt, parameterCount, options), 5000);
+          }
         })
+        )
       }
     }
   }
@@ -1877,7 +2305,6 @@ export class SpotifyComponent implements OnInit {
     var cnt = 0;
       this.http.get(url, options)
       .subscribe(response => {
-        this.relatedArtistList.artists = [];
         if (cnt < numberOfSongsPerRelatedArtists){
           response.json().artists.forEach(element => {
             var artistToAdd = {
@@ -1885,22 +2312,32 @@ export class SpotifyComponent implements OnInit {
               name: element.name,
             }
             cnt++;
-            this.relatedArtistList.artists.push(artistToAdd.name);
+            if (this.excludedArtists.filter(e => e.name == artistToAdd.name).length == 0) {
+              this.relatedArtistList.artists.push(artistToAdd.name);
+            }
           })
         }
         var cnt2 = 0;
         var index = 0;
         var repeat = false;
-        this.relatedArtistList.artists.forEach(element => {
-          if (cnt2 == 0){
-            var url = this.apiBaseUrl + "q=artist:" + element.replace(/\s/g, '-') + " OR " + this.relatedArtistList.artists[index + 1].replace(/\s/g, '-') + "&type=track&market=AU&offset=0&limit=10";
-            this.addArtistSongs(url, options, artistSongs, (numberOfRelatedArtistSongs * 2.5),i,numberOfSongsPerRelatedArtists,numberOfRelatedArtistSongs, repeat);
-            cnt2++;
-          }else{
-            cnt2 = 0;
-          }
-          index++;
-        })
+        if (i == (this.selectedArtists.length - 1)){
+          console.log(this.relatedArtistList.artists);
+          this.relatedArtistList.artists.forEach(element => {
+            if (cnt2 == 0){
+              if (this.relatedArtistList.artists[index + 1] != undefined){
+                var url = this.apiBaseUrl + "q=artist:" + element.replace(/\s/g, '-') + " OR " + this.relatedArtistList.artists[index + 1].replace(/\s/g, '-') + "&type=track&market=AU&offset=0&limit=10";
+                this.addArtistSongs(url, options, artistSongs, (numberOfRelatedArtistSongs * 2.5),i,numberOfSongsPerRelatedArtists,numberOfRelatedArtistSongs, repeat);
+              }else{
+                var url = this.apiBaseUrl + "q=artist:" + element.replace(/\s/g, '-') + "&type=track&market=AU&offset=0&limit=10";
+                this.addArtistSongs(url, options, artistSongs, (numberOfRelatedArtistSongs * 2.5),i,numberOfSongsPerRelatedArtists,numberOfRelatedArtistSongs, repeat);
+              }
+              cnt2++;
+            }else{
+              cnt2 = 0;
+            }
+            index++;
+          })
+        }
     })
   }
 
@@ -1919,10 +2356,17 @@ export class SpotifyComponent implements OnInit {
         this.shufflePlaylist(artistSongs);
         artistSongs = artistSongs.slice(0, mainArtistSongTotal);
         this.selectedTracks.uris = this.selectedTracks.uris.concat(artistSongs);
+        console.log(this.selectedTracks.uris);
         if (repeat){
-          var url2 = "https://api.spotify.com/v1/artists/" + this.selectedArtists[i].id  + "/related-artists"
+          var url2 = "https://api.spotify.com/v1/artists/" + this.selectedArtists[i].id  + "/related-artists";
           this.getRelatedArtists(i, options, numberOfRelatedArtistsPerMainArtist,url2,artistSongs,mainArtistSongTotal,numberOfRelatedArtistSongs);
         }
+    },
+    (error => {
+      if (error.json().error.message = "API rate limit exceeded"){
+        setTimeout(() => this.addArtistSongs(url, options, artistSongs, mainArtistSongTotal,i,numberOfRelatedArtistsPerMainArtist,numberOfRelatedArtistSongs, repeat), 5000)
+      }
     })
+    );
   }
 }
