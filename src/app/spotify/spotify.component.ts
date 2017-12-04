@@ -5,7 +5,6 @@ import {debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import {Injectable} from '@angular/core';
 import {Http, Response} from '@angular/http';
 import {Headers, RequestOptions} from '@angular/http';
-import { Cookie } from 'ng2-cookies/ng2-cookies';
 
 
 @Component({
