@@ -2014,8 +2014,8 @@ export class SpotifyComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.access_token = this.activatedRoute.snapshot.queryParams["access_token"];
-    this.access_token = "BQCVYpP2TPL-oR8RVB4yLSt7Tj8fToO7KlzwbgHgYKWPRtU71LeOri2YGzJ2nrVi7cawxAGBHegcFWb8rgsarsGOiqyOpncmG30hGnRezscKfZ0n12S4xhe-J257lJ0tdQklEV7UqerqAUC-_6xSmu48G5cm_MqCmMpX4Mohe3L4lU-xlsGpCb1AR2vCiNE6vUjQlYQXRSrjnH6dHCcbCPE4x-ulS_Tjaf8W9WN3C-VxXT0S";
+    this.access_token = this.activatedRoute.snapshot.queryParams["access_token"];
+    // this.access_token = "BQCVYpP2TPL-oR8RVB4yLSt7Tj8fToO7KlzwbgHgYKWPRtU71LeOri2YGzJ2nrVi7cawxAGBHegcFWb8rgsarsGOiqyOpncmG30hGnRezscKfZ0n12S4xhe-J257lJ0tdQklEV7UqerqAUC-_6xSmu48G5cm_MqCmMpX4Mohe3L4lU-xlsGpCb1AR2vCiNE6vUjQlYQXRSrjnH6dHCcbCPE4x-ulS_Tjaf8W9WN3C-VxXT0S";
     var url = 'https://api.spotify.com/v1/me';
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
@@ -2031,9 +2031,9 @@ export class SpotifyComponent implements OnInit {
         console.log(error.json());
       })
     )
-    // if (access_token == undefined){
-    //   this.router.navigate(['/login'])
-    // }
+    if (this.access_token == undefined){
+      this.router.navigate(['/login'])
+    }
   }
 
   onFieldChange(query:string, addOrExclude:string){
