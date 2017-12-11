@@ -12,6 +12,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatCardModule} from '@angular/material/card';
 import {MatTabsModule} from '@angular/material/tabs';
+import {MatIconModule} from '@angular/material/icon';
 
 
 import { AppComponent } from './app.component';
@@ -47,6 +48,7 @@ const appRoutes: Routes = [
     MatInputModule,
     MatTabsModule,
     MatCardModule,
+    MatIconModule,
     MatExpansionModule,
     HttpModule,
     RouterModule.forRoot(

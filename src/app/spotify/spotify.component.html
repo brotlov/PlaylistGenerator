@@ -1,148 +1,30 @@
-<div *ngIf="playlistCreated" class="container playlist-completed">
-  <h2>Your playlist has been successfully created.</h2>
-  <p><a [href]="newPlaylistUrl" target="_blank">Click here</a> to view your playlist, or <a (click)="makeAnother()" href="javascript:void(0)">click here</a> to make another one</p>
+<div [ngClass]="['navbar', 'container', 'fw', 'short', 'spotify', (searchActive == true) ? 'search-active' : '']">
+    <a href="/">Playlist Generator</a>
 </div>
-<div class="container">
-  <div class="error" *ngIf="applicationError != ''">{{applicationError}}</div>
-  <div *ngIf="!playlistCreated" [ngClass]="['playlist-generator', (searchActive == true) ? 'search-active' : '']">
-    <mat-form-field class="center fw">
-      <input matInput [ngClass]="{ 'invalid': playlistNameValid == false }" [(ngModel)]="playlistName" placeholder="Playlist Name">
+<div [ngClass]="['container', 'fw', 'short', 'center',(searchActive == true) ? 'white-bg' : '']">
+  <div [ngClass]="['search', (searchActive == true) ? 'search-active' : '']">
+    <mat-icon (click)="searchActive = true" *ngIf="!searchActive">search</mat-icon>
+    <mat-icon (click)="searchActive = false" *ngIf="searchActive">close</mat-icon>
+    <mat-form-field>
+      <input (click)="clickedInside($event)" [(ngModel)]='searchTerm' (ngModelChange)='changed($event)' matInput placeholder="Search">
     </mat-form-field>
-    <div *ngIf="loadingPlaylist" class="loader"></div>
-    <mat-tab-group [(selectedIndex)]="selectedTabIndex">
-      <mat-tab label="Playlist Additions">
-        <mat-accordion >
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                <i class="material-icons">people</i> 
-                <span class="title">Artists</span>
-              </mat-panel-title>
-              <mat-panel-description>
-                <p>Type an artist to add to your playlist. By adding an artist, your playlist will contain songs from that artist, as well as songs from related artists.</p>
-                
-              </mat-panel-description>
-            </mat-expansion-panel-header>
-            <mat-form-field class="searcher">
-              <input matInput type="text" [(ngModel)]="newArtist" (ngModelChange)="onFieldChange($event, 'add')" placeholder="Artist Name">
-            </mat-form-field>
-          </mat-expansion-panel>
-          <mat-card *ngIf="selectedArtists.length > 0">
-            <mat-chip-list >
-                <mat-chip (click)="removeArtist(s,'add')" *ngFor="let s of selectedArtists" selected="true" color="primary">{{s.name}} <i class="material-icons">close</i></mat-chip>
-              </mat-chip-list>
-          </mat-card>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                <i class="material-icons">list</i> 
-                <span class="title">Genre</span>
-              </mat-panel-title>
-              <mat-panel-description>
-                Select the different Genre's that you'd like to appear in your playlist
-              </mat-panel-description>
-            </mat-expansion-panel-header>
-            <mat-form-field class="searcher">
-              <input matInput type="text" [(ngModel)]="genreSearchString" (ngModelChange)="onGenreFieldChange($event, 'add')" placeholder="Search for a Genre">
-            </mat-form-field>
-            
-          </mat-expansion-panel>
-          <mat-chip-list *ngIf="selectedGenres.length > 0">
-            <mat-chip (click)="removeGenre(s,'add')" *ngFor="let s of selectedGenres" selected="true" color="primary">{{s.Name}} <i class="material-icons">close</i></mat-chip>
-          </mat-chip-list>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                <i class="material-icons">settings</i> 
-                <span class="title">More</span>
-              </mat-panel-title>
-              <mat-panel-description>
-                Advanced options for your playlist
-              </mat-panel-description>
-            </mat-expansion-panel-header>
-            <mat-form-field class="searcher col3">
-              <input matInput type="date" placeholder="Song Year Range">
-            </mat-form-field>
-            <mat-form-field class="searcher col3">
-              <input matInput [(ngModel)]="numberOfPlaylistSongs" type="text" placeholder="Number of Songs">
-            </mat-form-field>
-            <mat-form-field class="searcher col3">
-              <input matInput type="text" placeholder="Option goes here">
-            </mat-form-field>
-          </mat-expansion-panel>
-        </mat-accordion>
-      </mat-tab>
-      <mat-tab label="Playlist Exclusions">
-        <mat-accordion *ngIf="selectedTabIndex == 1">
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                <i class="material-icons">people</i> 
-                <span class="title">Artists</span>
-              </mat-panel-title>
-              <mat-panel-description>
-                Type an artist to exclude to your playlist. By adding an artist, your playlist will not contain songs from that artist.
-              </mat-panel-description>
-            </mat-expansion-panel-header>
-            <mat-form-field class="searcher">
-              <input matInput type="text" [(ngModel)]="artistExclusionString" (ngModelChange)="onFieldChange($event, 'exclude')" placeholder="Artist Name">
-            </mat-form-field>
-          </mat-expansion-panel>
-          <mat-chip-list *ngIf="excludedArtists.length > 0">
-            <mat-chip (click)="removeArtist(s, 'exclude')" *ngFor="let s of excludedArtists" selected="true" color="primary">{{s.name}} <i class="material-icons">close</i></mat-chip>
-          </mat-chip-list>
-          <!--<mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                <i class="material-icons">list</i> 
-                <span class="title">Genre</span>
-              </mat-panel-title>
-              <mat-panel-description>
-                Select the different Genre's that you do not want to appear in your playlist
-              </mat-panel-description>
-            </mat-expansion-panel-header>
-            <mat-form-field class="searcher">
-              <input matInput type="text" [(ngModel)]="genreExclusionString" (ngModelChange)="onGenreFieldChange($event, 'exclude')" placeholder="Search for a Genre">
-            </mat-form-field>
-          </mat-expansion-panel>-->
-          <mat-chip-list *ngIf="excludedGenres.length > 0">
-            <mat-chip (click)="removeGenre(s,'exclude')" *ngFor="let s of excludedGenres" selected="true" color="primary">{{s.Name}} <i class="material-icons">close</i></mat-chip>
-          </mat-chip-list>
-        </mat-accordion>
-      </mat-tab>
-    </mat-tab-group>
-    <div class="center fw margin-top-25">
-      <button (click)="generatePlaylist()" color="warn" mat-raised-button>Generate Playlist</button>
-    </div>
   </div>
-  <div *ngIf="searchActive" class="search-container">
-    <h2>Search Results</h2>
-    <div *ngIf="errorMessage != ''" class="error">
-      <p>{{errorMessage}}</p>
-    </div>
-    <div *ngIf="search.Genre">
-      <div *ngIf="genreLoading" class="loader"></div>
-      <mat-checkbox [(ngModel)]="genre.IsSelected" (click)="toggleGenre(genre)" *ngFor="let genre of filteredGenreResults">
-        {{genre.Name}}
-      </mat-checkbox>
-    </div>
-    <div *ngIf="search.Artist">
-    <ul [ngClass]="{ 'loading': loading == true }">
-      <div *ngIf="loading" class="loader"></div>
-      <li *ngFor="let s of searchResults">
-        <div>
-          <img height="160" width="160" *ngIf="s.images.length != 0" [src]="s.images[1].url"/>
-          <img *ngIf="s.images.length == 0" src="http://via.placeholder.com/160x160">
-          <span class="artist-name">{{s.name}}</span>
-        </div>
-        <div>
-          <!--<label>On a scale of 1 to 10, select how often you want this artist to appear (default is 5)</label>
-          <mat-slider [(ngModel)]="s.strength" thumbLabel [disabled]="s.IsSelected == true" min="1" max="10" step="1" value="5"></mat-slider>-->
-          <button *ngIf="!excluding" (click)="addArtist(s)" [disabled]="s.IsSelected == true" color="warn" mat-raised-button>Add to Playlist</button>
-          <button *ngIf="excluding" (click)="addArtist(s)" [disabled]="s.IsSelected == true" color="warn" mat-raised-button>Exclude from Playlist</button>
-        </div>
-      </li>
-    </ul>
-    </div>
+</div>
+<div *ngIf="searchActive" (click)="clickedInside($event)" class="container search-results-wrapper">
+  <h3 *ngIf="searchTerm == undefined || searchTerm == ''">Start typing to begin your search</h3>
+  <h3 *ngIf="searchTerm != undefined && searchTerm != ''">Showing search results for {{searchTerm}}</h3>
+  <div *ngIf="searchTerm != undefined && searchTerm != ''" class="search-results">
+    <div *ngIf="searchLoading" class="loader"></div>
+    <mat-card *ngFor="let s of searchResults" class="result">
+      <img *ngIf="s.Image != ''" mat-card-image [src]="s.Image" alt="{{s.Name}}">
+      <mat-card-content>
+        <mat-card-title>{{s.Name}}</mat-card-title>
+        <mat-card-subtitle>{{s.Type}}</mat-card-subtitle>
+      </mat-card-content>
+      <mat-card-actions>
+        <button (click)="addToAdditions(s)" mat-button>Add</button>
+        <button (click)="openAdvancedoptions(s)" mat-button><mat-icon>settings</mat-icon></button>
+      </mat-card-actions>
+    </mat-card>
   </div>
 </div>
