@@ -13,12 +13,14 @@ import {MatChipsModule} from '@angular/material/chips';
 import {MatCardModule} from '@angular/material/card';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatIconModule} from '@angular/material/icon';
+import {MatDialogModule} from '@angular/material/dialog';
 
 
 import { AppComponent } from './app.component';
 import { SpotifyComponent } from './spotify/spotify.component';
 import { AppleComponent } from './apple/apple.component';
 import { LoginComponent } from './login/login.component';
+import { DialogComponent } from './dialog/dialog.component';
 
 const appRoutes: Routes = [
   { path: '',      component: LoginComponent },
@@ -34,7 +36,8 @@ const appRoutes: Routes = [
     AppComponent,
     SpotifyComponent,
     AppleComponent,
-    LoginComponent
+    LoginComponent,
+    DialogComponent
   ],
   imports: [
     BrowserModule,
@@ -48,6 +51,7 @@ const appRoutes: Routes = [
     MatInputModule,
     MatTabsModule,
     MatCardModule,
+    MatDialogModule,
     MatIconModule,
     MatExpansionModule,
     HttpModule,
