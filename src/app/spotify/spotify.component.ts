@@ -7,7 +7,7 @@ import {Http, Response} from '@angular/http';
 import {Headers, RequestOptions} from '@angular/http';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import {DialogComponent} from '../dialog/dialog.component';
-
+import {searchResult} from '../models/searchResultModel'
 
 @Component({
   selector: 'app-spotify',
@@ -49,38 +49,27 @@ export class SpotifyComponent implements OnInit {
                 if (property == "Genres"){
                   var filteredGenreResults = responseObject[property].filter(item => item.Name.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1).slice(0, 21);
                   filteredGenreResults.forEach(result => {
-                    var newResult = {
-                      Name: "",
-                      Type: "",
-                      Image: "",
-                      Id: ""
-                    };
-                    newResult.Name = result.Name;
-                    newResult.Image = "";
-                    newResult.Type = "Genre";
-                    newResult.Id = "";
+                    var newResult = new searchResult();
+                    newResult.name = result.Name;
+                    newResult.image = "";
+                    newResult.type = "Genre";
+                    newResult.id = "";
                     this.searchResults.push(newResult);
                   })
                 }else{
                  responseObject[property].items.forEach(result => {
-                  var newResult = {
-                      Name: "",
-                      Type: "",
-                      Image: "",
-                      Id: ""
-                    };
-                    newResult.Name = result.name;
+                   var newResult = new searchResult();
+                    newResult.name = result.name;
                     if (result.images != undefined && result.images.length > 0){
-                      newResult.Image = result.images[0].url;
+                      newResult.image = result.images[0].url;
                     }
-                    newResult.Type = result.type;
-                    newResult.Id = result.id;
+                    newResult.type = result.type;
+                    newResult.id = result.id;
                     this.searchResults.push(newResult);
                 });
                 }
               }
               this.searchLoading = false;
-              console.log(this.searchResults)
             },
             (error) => {
               this.ErrorHander(url, "", error);
@@ -91,6 +80,7 @@ export class SpotifyComponent implements OnInit {
   ngOnInit() {
     this.refresh_token = this.activatedRoute.snapshot.queryParams["refresh_token"];
     this.access_token = this.activatedRoute.snapshot.queryParams["access_token"];
+    // this.openAdvancedoptions();
     // this.access_token = "BQDdk2j0DaxcuT-czb4JDlOAO3HGhrdRb90gzLdnIFqTNrGNlijzgYsL1bWxUMWNId4LTsjJsD6SEd1c-lK20IfuEdg_83qfaFdhwZeMBDrGpjFVZk1JFDYm6cCXU9Czg6L0fnemK4oGuoAE9zyf4J1CSKBJv9-h35ir0wcWfc6n-8y99w-mmETEow3XdHuvt3FVF8YlVCdgcNFXi_QJw8uY8yuumDjuRS6YDidQjbgdI-Yk";
     // this.refresh_token = "AQCtfoph_XvPHNVSFZiPBNoYPHMlVjPyMEa2_eKLaaEgz5pL-UWucBNDaXXUyd6W-ClQki9FIEnhtDKcKnKKGxnyct65_XAQcuUbysWOWabhrJcd_PCn2dOaRzzaGhaH27I";
   }
@@ -103,11 +93,9 @@ export class SpotifyComponent implements OnInit {
     $event.preventDefault();
     $event.stopPropagation();
     this.searchActive = true;
-    console.log("hit");
   }
 
   @HostListener('document:click', ['$event']) clickedOutside($event){
-    console.log(this.searchTerm)
     if(this.searchTerm == "" || this.searchTerm == undefined){
       if (this.searchActive){
         this.searchActive = false;
@@ -153,8 +141,10 @@ export class SpotifyComponent implements OnInit {
 
   openAdvancedoptions(object){
     let dialogRef = this.dialog.open(DialogComponent, {
-      width: '500px',
-      data: { name: object.name, id: object.id }
+      width: '75%',
+      height:'80%',
+      data: { object, "token": this.access_token }
+      // data: {"token": this.access_token}
     });
 
     dialogRef.afterClosed().subscribe(result => {

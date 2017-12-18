@@ -12,6 +12,10 @@ body * {
   transition: .2s;
 }
 
+body .hidden {
+  display: none;
+}
+
 body .loader {
   z-index: 10;
   position: absolute;
@@ -119,6 +123,20 @@ body .half {
   text-align: center;
 }
 
+body .half h3 {
+  margin: 0;
+  padding: 20px;
+}
+
+body .half h3.header {
+  background: #1DB954;
+  color: #fff;
+}
+
+body .half h3.header.inverse {
+  background: #cc0000;
+}
+
 body .half a {
   display: inline-block;
   padding: 40px;
@@ -185,17 +203,19 @@ body .search > * {
 }
 
 body .search-results-wrapper {
+  width: 100%;
   margin-top: 250px;
 }
 
 body .search-results-wrapper h3 {
-  margin: 1em 0;
+  max-width: 1200px;
+  margin: 1em auto;
 }
 
 body .search-results-wrapper .search-results {
   position: relative;
   padding: 20px;
-  column-count: 4;
+  column-count: 6;
   column-gap: 1em;
   min-height: 50vh;
 }
@@ -211,6 +231,135 @@ body .search-results-wrapper .search-results .result {
 
 body .search-results-wrapper .search-results .result:nth-of-type(4n+4), body .search-results-wrapper .search-results .result:last-of-type {
   margin-right: 0;
+}
+
+body .search-results-wrapper .search-results .result .mat-card-actions button {
+  width: 29%;
+  min-width: 0;
+}
+
+body .modal {
+  height: 100%;
+}
+
+body .modal .mat-card-header .mat-card-header-text {
+  display: none !important;
+}
+
+body .modal .halves {
+  font-size: 0;
+}
+
+body .modal .halves > div {
+  vertical-align: top;
+  font-size: 16px;
+  display: inline-block;
+  width: 40%;
+  text-align: right;
+}
+
+body .modal .halves > div:first-of-type {
+  text-align: left;
+  width: 60%;
+}
+
+body .modal .halves > div p {
+  text-align: left;
+  width: 90%;
+  margin: 0 0 0 auto;
+}
+
+body .modal .mat-card-title {
+  font-size: 2em;
+}
+
+body .modal .mat-card-subtitle {
+  font-size: 1.5em;
+}
+
+body .modal .mat-card-image {
+  max-width: 90%;
+  margin-right: 0;
+}
+
+body .modal .mat-slider {
+  width: 90%;
+}
+
+body .modal .mat-card-actions button {
+  width: 48%;
+  display: inline-block;
+}
+
+body .modal .mat-card-actions {
+  max-width: 90%;
+  margin: 0 0 0 auto;
+}
+
+body .modal .model-result-container {
+  max-height: 550px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+body .modal .modal-item-result {
+  border-bottom: 1px solid #1DB954;
+  padding: 20px 10px;
+  position: relative;
+}
+
+body .modal .modal-item-result img {
+  max-width: 120px;
+}
+
+body .modal .modal-item-result .load-more {
+  margin: 10px auto;
+  display: block;
+}
+
+body .modal .modal-item-result.open .result-listings {
+  height: auto;
+  padding: 20px 0;
+}
+
+body .modal .modal-item-result .result-listings {
+  height: 0;
+  width: 100%;
+  overflow: hidden;
+  padding: 0;
+}
+
+body .modal .modal-item-result .result-listings div h5 {
+  font-size: 1.1rem;
+  display: inline-block;
+  width: 70%;
+  font-weight: 300;
+  margin: 5px 0;
+  border-bottom: 1px solid #1DB954;
+}
+
+body .modal .modal-item-result > div {
+  display: inline-block;
+  vertical-align: top;
+  width: 70%;
+  padding-left: 20px;
+}
+
+body .modal .modal-item-result > div h3 {
+  font-size: 1.2rem;
+  display: inline-block;
+  width: 80%;
+}
+
+body .modal .modal-item-result > div > span {
+  display: inline-block;
+  width: 50%;
+}
+
+body .modal .modal-item-result > div .mat-checkbox {
+  display: inline-block;
+  width: 15%;
+  vertical-align: top;
 }
  
 

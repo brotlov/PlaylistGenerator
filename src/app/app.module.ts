@@ -60,6 +60,7 @@ const appRoutes: Routes = [
       { enableTracing: false } // <-- debugging purposes only
     )
   ],
+  entryComponents: [DialogComponent],
   providers: [],
   bootstrap: [AppComponent]
 })

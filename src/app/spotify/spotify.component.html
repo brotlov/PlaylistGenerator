@@ -10,20 +10,29 @@
     </mat-form-field>
   </div>
 </div>
+<div [ngClass]="['container', 'fw', 'halves',(searchActive == true ? 'hidden' : '')]">
+  <div class="half">
+    <h3 class="header">Additions</h3>
+  </div>
+  <div class="half">
+    <h3 class="header inverse">Exclusions</h3>
+  </div>
+</div>
 <div *ngIf="searchActive" (click)="clickedInside($event)" class="container search-results-wrapper">
   <h3 *ngIf="searchTerm == undefined || searchTerm == ''">Start typing to begin your search</h3>
   <h3 *ngIf="searchTerm != undefined && searchTerm != ''">Showing search results for {{searchTerm}}</h3>
   <div *ngIf="searchTerm != undefined && searchTerm != ''" class="search-results">
     <div *ngIf="searchLoading" class="loader"></div>
     <mat-card *ngFor="let s of searchResults" class="result">
-      <img *ngIf="s.Image != ''" mat-card-image [src]="s.Image" alt="{{s.Name}}">
+      <img *ngIf="s.image != ''" mat-card-image [src]="s.image" alt="{{s.name}}">
       <mat-card-content>
-        <mat-card-title>{{s.Name}}</mat-card-title>
-        <mat-card-subtitle>{{s.Type}}</mat-card-subtitle>
+        <mat-card-title>{{s.name}}</mat-card-title>
+        <mat-card-subtitle>{{s.type}}</mat-card-subtitle>
       </mat-card-content>
       <mat-card-actions>
-        <button (click)="addToAdditions(s)" mat-button>Add</button>
+        <button (click)="toggleAddition(s)" mat-button><mat-icon>add</mat-icon></button>
         <button (click)="openAdvancedoptions(s)" mat-button><mat-icon>settings</mat-icon></button>
+        <button (click)="toggleBlock(s)" mat-button><mat-icon>delete</mat-icon></button>
       </mat-card-actions>
     </mat-card>
   </div>

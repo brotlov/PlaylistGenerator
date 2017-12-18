@@ -3,6 +3,7 @@ $spotifySecondary:#191414;
 $applePrimary:#92278F;
 $appleSecondary:#BBBBBB;
 $universalPadding: 20px;
+$errorRed: #cc0000;
 
 body{
     font-size:16px;
@@ -14,6 +15,9 @@ body{
         margin: 0;
         padding: 0;
         transition: .2s;
+    }
+    .hidden{
+        display: none;
     }
     .loader{
         z-index:10;
@@ -109,6 +113,17 @@ body{
         width: 50%;
         height: 100%;
         text-align: center;
+        h3{
+            margin:0;
+            padding:$universalPadding;
+            &.header{
+                background:$spotifyPrimary;
+                color:#fff;
+                &.inverse{
+                    background:$errorRed
+                }
+            }
+        }
         a{
             display: inline-block;
             padding: 40px;
@@ -167,14 +182,16 @@ body{
         }
     }
     .search-results-wrapper{
+        width:100%;
         margin-top:250px;
         h3{
-            margin:1em 0;
+            max-width:1200px;
+            margin:1em auto;
         }
         .search-results{
             position: relative;
             padding:$universalPadding;
-            column-count: 4;
+            column-count: 6;
             column-gap: 1em;
             min-height:50vh;
             .result{
@@ -186,6 +203,121 @@ body{
                 vertical-align: top;
                 &:nth-of-type(4n+4), &:last-of-type{
                     margin-right: 0;
+                }
+                .mat-card-actions{
+                    button{
+                        width:29%;
+                        min-width: 0;
+                    }
+                }
+            }
+        }
+    }
+    .modal{
+        height:100%;
+        .mat-card-header{
+            .mat-card-header-text{
+                display: none!important;
+            }
+        }
+        .halves{
+            font-size:0;
+            > div{
+                vertical-align: top;
+                font-size:16px;
+                display: inline-block;
+                width:40%;
+                text-align: right;
+                &:first-of-type{
+                    text-align: left;
+                    width:60%;
+                }
+                p{
+                    text-align: left;
+                    width:90%;
+                    margin: 0 0 0 auto;
+                }
+            }
+        }
+        .mat-card-title{
+            font-size:2em;
+        }
+        .mat-card-subtitle{
+            font-size:1.5em;
+        }
+        .mat-card-image{
+            max-width: 90%;
+            margin-right:0;
+        }
+        .mat-slider{
+            width:90%;
+        }
+        .mat-card-actions{
+            button{
+                width:48%;
+                display: inline-block;
+            }
+        }
+        .mat-card-actions{
+            max-width: 90%;
+            margin: 0 0 0 auto;
+        }
+        .model-result-container{
+            max-height: 550px;
+            overflow-y:scroll;
+            overflow-x:hidden;
+        }
+        .modal-item-result{
+            border-bottom:1px solid $spotifyPrimary;
+            padding:20px 10px;
+            position: relative;
+            img{
+                max-width:120px;
+            }
+           .load-more{
+               margin:10px auto;
+               display: block;
+           }
+            &.open{
+                .result-listings{
+                    height:auto;
+                    padding:$universalPadding 0;
+                }
+            }
+            .result-listings{
+                height:0;
+                width:100%;
+                overflow:hidden;
+                padding: 0;
+                div{
+                    h5{
+                        font-size:1.1rem;
+                        display: inline-block;
+                        width:70%;
+                        font-weight: 300;
+                        margin:5px 0;
+                        border-bottom:1px solid $spotifyPrimary;
+                    }
+                }
+            }
+            > div{
+                display: inline-block;
+                vertical-align: top;
+                width:70%;
+                padding-left:$universalPadding;
+                h3{
+                    font-size: 1.2rem;
+                    display: inline-block;
+                    width:80%;
+                }
+                >span{
+                    display: inline-block;
+                    width:50%;
+                }
+                .mat-checkbox{
+                    display: inline-block;
+                    width:15%;
+                    vertical-align: top;
                 }
             }
         }
