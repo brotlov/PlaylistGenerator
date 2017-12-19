@@ -13,9 +13,27 @@
 <div [ngClass]="['container', 'fw', 'halves',(searchActive == true ? 'hidden' : '')]">
   <div class="half">
     <h3 class="header">Additions</h3>
+    <div class="parameter-results">
+      <mat-card *ngFor="let a of parameters.additions.artist" class="result">
+        <img *ngIf="a.image != '' && a.image != null" mat-card-image [src]="a.image" alt="{{a.name}}">
+        <mat-card-content>
+          <mat-card-title>{{a.name}}</mat-card-title>
+          <mat-card-subtitle>{{a.type}}</mat-card-subtitle>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
   <div class="half">
     <h3 class="header inverse">Exclusions</h3>
+    <div class="parameter-results">
+      <mat-card *ngFor="let e of parameters.exclusions.artist" class="result">
+        <img *ngIf="e.image != '' && e.image != null" mat-card-image [src]="e.image" alt="{{e.name}}">
+        <mat-card-content>
+          <mat-card-title>{{e.name}}</mat-card-title>
+          <mat-card-subtitle>{{e.type}}</mat-card-subtitle>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
 </div>
 <div *ngIf="searchActive" (click)="clickedInside($event)" class="container search-results-wrapper">
@@ -24,15 +42,15 @@
   <div *ngIf="searchTerm != undefined && searchTerm != ''" class="search-results">
     <div *ngIf="searchLoading" class="loader"></div>
     <mat-card *ngFor="let s of searchResults" class="result">
-      <img *ngIf="s.image != ''" mat-card-image [src]="s.image" alt="{{s.name}}">
+      <img *ngIf="s.image != '' && s.image != null" mat-card-image [src]="s.image" alt="{{s.name}}">
       <mat-card-content>
         <mat-card-title>{{s.name}}</mat-card-title>
         <mat-card-subtitle>{{s.type}}</mat-card-subtitle>
       </mat-card-content>
       <mat-card-actions>
-        <button (click)="toggleAddition(s)" mat-button><mat-icon>add</mat-icon></button>
-        <button (click)="openAdvancedoptions(s)" mat-button><mat-icon>settings</mat-icon></button>
-        <button (click)="toggleBlock(s)" mat-button><mat-icon>delete</mat-icon></button>
+        <button (click)="addToAdditions(s)" mat-button><mat-icon>add</mat-icon></button>
+        <button *ngIf="s.type != 'track'" (click)="openAdvancedoptions(s)" mat-button><mat-icon>settings</mat-icon></button>
+        <button (click)="addToExclusions(s)" mat-button><mat-icon>not_interested</mat-icon></button>
       </mat-card-actions>
     </mat-card>
   </div>

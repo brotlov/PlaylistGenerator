@@ -1,8 +1,9 @@
-export class searchResult {
+export class playlistParameter {
     name: string;
     type: string;
-    image: string;
     id: string;
     strength: 5;
+    image: string;
     relatedArtistStrength: 5;
+    items: any[];
 }

@@ -1,45 +1,45 @@
 <mat-card class="modal">
   <mat-card-content class="halves">
     <div>
-      <mat-card-title>{{name}}</mat-card-title>
-      <mat-card-subtitle>{{type}}</mat-card-subtitle>
+      <mat-card-title>{{dataObject.name}}</mat-card-title>
+      <mat-card-subtitle>{{dataObject.type}}</mat-card-subtitle>
       <div class="model-result-container">
-        <div *ngFor="let o of objects" [ngClass]="['modal-item-result', (o.open == true || type == 'album' ? 'open' : '')]">
-          <img *ngIf="type == 'artist'" [src]="o.image">
-          <div *ngIf="type == 'artist'">
+        <div *ngFor="let o of objects" [ngClass]="['modal-item-result', (o.open == true || dataObject.type == 'album' ? 'open' : '')]">
+          <img *ngIf="dataObject.type == 'artist'" [src]="o.image">
+          <div *ngIf="dataObject.type == 'artist'">
             <span>{{o.year}}</span>
             <h3 class="result-title">{{o.name}}</h3>
-            <mat-checkbox [(ngModel)]="o.selected">Included</mat-checkbox>
-            <div *ngIf="o.type == 'artist'" class="result-listings">
+            <mat-checkbox  (change)="updateChildItems(o)" [(ngModel)]="o.selected">Included</mat-checkbox>
+            <div class="result-listings">
               <div *ngFor="let i of o.items">
                 <h5>{{i.name}}</h5>
                 <mat-checkbox [(ngModel)]="i.selected">Included</mat-checkbox>
               </div>
             </div>
-            <button class="load-more" *ngIf="o.open != true" (click)="o.open = !o.open" mat-button>View Items</button>
-            <button class="load-more" *ngIf="o.open == true" (click)="o.open = !o.open" mat-button>Hide Items</button>
+            <button color="primary" class="load-more" *ngIf="o.open != true" (click)="o.open = !o.open" mat-raised-button>View Items</button>
+            <button color="primary" class="load-more" *ngIf="o.open == true" (click)="o.open = !o.open" mat-raised-button>Hide Items</button>
           </div>
-          <div class="result-listings" *ngIf="type == 'album'">
+          <div class="result-listings" *ngIf="dataObject.type == 'album'">
             <div *ngFor="let i of o.items">
               <h5>{{i.name}}</h5>
-              <mat-checkbox [(ngModel)]="i.selected">Included</mat-checkbox>
+              <mat-checkbox  [(ngModel)]="i.selected">Included</mat-checkbox>
             </div>
           </div>
         </div>
       </div>
     </div>
     <div>
-      <img mat-card-image [src]="image" alt="{{name}}">
-      <div>
-        <p>(If Artist) Adjust this scale to change how often you want related artists from this artist to appear in your playlist</p>
-        <mat-slider  thumbLabel min="0" max="10" step="1" value="5"></mat-slider>
+      <img mat-card-image [src]="dataObject.image" alt="{{name}}">
+      <div *ngIf="dataObject.type == 'artist'">
+        <p>Adjust this scale to change how often you want related artists from this artist to appear in your playlist</p>
+        <mat-slider [(ngModel)]="dataObject.relatedArtistStrength" thumbLabel min="0" max="10" step="1" value="5"></mat-slider>
       </div>
       <div>
-        <p>Adjust this scale to change how often you want this [OBJECT TYPE] to appear in your playlist</p>
-        <mat-slider  thumbLabel min="0" max="10" step="1" value="5"></mat-slider>
+        <p>Adjust this scale to change how often you want this {{type}} to appear in your playlist</p>
+        <mat-slider [(ngModel)]="dataObject.strength" thumbLabel min="0" max="10" step="1" value="5"></mat-slider>
          <mat-card-actions>
-          <button (click)="toggleAddition(s)" mat-button><mat-icon>add</mat-icon></button>
-          <button (click)="toggleBlock(s)" mat-button><mat-icon>delete</mat-icon></button>
+          <button (click)="addToAdditions(dataObject)" mat-button><mat-icon>add</mat-icon></button>
+          <button (click)="addToExclusions(dataObject)" mat-button><mat-icon>not_interested</mat-icon></button>
         </mat-card-actions>
       </div>
     </div>
