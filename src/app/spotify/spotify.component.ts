@@ -80,6 +80,7 @@ export class SpotifyComponent implements OnInit {
                     newResult.strength = 5;
                     newResult.relatedArtistStrength = 5;
                     this.searchResults.push(newResult);
+                    // console.log(newResult);
                 });
                 }
               }
@@ -157,20 +158,46 @@ export class SpotifyComponent implements OnInit {
     });
   }
 
+  generateSelectedParameters(obj){
+    return Object.keys(obj).map((key)=>{ return {key:key, value:obj[key]}});
+  }
+
+  getTitle(string){
+    string = string + "s"
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
+  alreadyExists(object){
+    return this.playlistParameters.checkItemAlreadyInPlaylist(object);
+  }
+
+  removeFromPlaylist(object, type){
+    let successMessage = "Removed from Playlist";
+    this.playlistParameters.removeFromPlaylist(object);
+    this.NotificationHandler(true,successMessage, object);
+    this.parameters = this.playlistParameters.getParameterList();
+  }
+
   addToAdditions(object){
     let successMessage = "Added to Playlist";
-    this.NotificationHandler(true,successMessage, object);
-    this.playlistParameters.addToParameterList(object);
+    let errorMessage = "Sorry, that item is already in your playlist";
+    if (this.playlistParameters.addToParameterList(object)){
+      this.NotificationHandler(true,successMessage, object);
+    }else{
+      this.NotificationHandler(false,errorMessage, object);
+    }
     this.parameters = this.playlistParameters.getParameterList();
-    console.log(this.parameters);
   }
 
   addToExclusions(object){
     let successMessage = "Added to Playlist Exclusions";
-    this.NotificationHandler(true,successMessage, object);
-    this.playlistParameters.addToExclusionsList(object);
+    let errorMessage = "Sorry, that item is already excluded from your playlist";
+    if (this.playlistParameters.addToExclusionsList(object)){
+      this.NotificationHandler(true,successMessage, object);
+    }else{
+      this.NotificationHandler(false,errorMessage, object);
+    }
     this.parameters = this.playlistParameters.getParameterList();
-    console.log(this.parameters); 
   }
 
   openAdvancedoptions(object){

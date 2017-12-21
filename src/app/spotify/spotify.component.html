@@ -13,27 +13,43 @@
 <div [ngClass]="['container', 'fw', 'halves',(searchActive == true ? 'hidden' : '')]">
   <div class="half">
     <h3 class="header">Additions</h3>
-    <div class="parameter-results">
-      <mat-card *ngFor="let a of parameters.additions.artist" class="result">
+    <div *ngFor="let o of generateSelectedParameters(parameters.additions)" [ngClass]="['parameter-results', (parameters.additions[o.key].shown == true ? '' : 'closed')]">
+      <h2 (click)="parameters.additions[o.key].shown = !parameters.additions[o.key].shown">{{getTitle(o.key)}} ({{o.value.items.length}})</h2>
+      <mat-card *ngFor="let a of o.value.items" class="result">
         <img *ngIf="a.image != '' && a.image != null" mat-card-image [src]="a.image" alt="{{a.name}}">
         <mat-card-content>
           <mat-card-title>{{a.name}}</mat-card-title>
           <mat-card-subtitle>{{a.type}}</mat-card-subtitle>
         </mat-card-content>
+        <mat-card-actions>
+          <button *ngIf="a.type != 'track'" (click)="openAdvancedoptions(a)" mat-button><mat-icon>settings</mat-icon></button>
+          <button (click)="removeFromPlaylist(a, 'additions')" mat-button><mat-icon>delete</mat-icon></button>
+      </mat-card-actions>
       </mat-card>
     </div>
   </div>
   <div class="half">
     <h3 class="header inverse">Exclusions</h3>
-    <div class="parameter-results">
-      <mat-card *ngFor="let e of parameters.exclusions.artist" class="result">
-        <img *ngIf="e.image != '' && e.image != null" mat-card-image [src]="e.image" alt="{{e.name}}">
+    <div *ngFor="let o of generateSelectedParameters(parameters.exclusions)" [ngClass]="['parameter-results', (parameters.exclusions[o.key].shown == true ? '' : 'closed')]">
+      <h2 (click)="parameters.exclusions[o.key].shown = !parameters.exclusions[o.key].shown">{{getTitle(o.key)}} ({{o.value.items.length}})</h2>
+      <mat-card *ngFor="let a of o.value.items" class="result">
+        <img *ngIf="a.image != '' && a.image != null" mat-card-image [src]="a.image" alt="{{a.name}}">
         <mat-card-content>
-          <mat-card-title>{{e.name}}</mat-card-title>
-          <mat-card-subtitle>{{e.type}}</mat-card-subtitle>
+          <mat-card-title>{{a.name}}</mat-card-title>
+          <mat-card-subtitle>{{a.type}}</mat-card-subtitle>
         </mat-card-content>
+        <mat-card-actions>
+          <button *ngIf="a.type != 'track'" (click)="openAdvancedoptions(a)" mat-button><mat-icon>settings</mat-icon></button>
+          <button (click)="removeFromPlaylist(a, 'exclusions')" mat-button><mat-icon>delete</mat-icon></button>
+      </mat-card-actions>
       </mat-card>
     </div>
+  </div>
+</div>
+<div class="cotnainer fw">
+  <h3 class="header blue">Settings</h3>
+  <div class="center">
+    <button color="primary"  mat-raised-button>Generate Playlist</button>
   </div>
 </div>
 <div *ngIf="searchActive" (click)="clickedInside($event)" class="container search-results-wrapper">
@@ -48,9 +64,10 @@
         <mat-card-subtitle>{{s.type}}</mat-card-subtitle>
       </mat-card-content>
       <mat-card-actions>
-        <button (click)="addToAdditions(s)" mat-button><mat-icon>add</mat-icon></button>
+        <button *ngIf="!alreadyExists(s)" (click)="addToAdditions(s)" mat-button><mat-icon>add</mat-icon></button>
         <button *ngIf="s.type != 'track'" (click)="openAdvancedoptions(s)" mat-button><mat-icon>settings</mat-icon></button>
-        <button (click)="addToExclusions(s)" mat-button><mat-icon>not_interested</mat-icon></button>
+        <button *ngIf="!alreadyExists(s)" (click)="addToExclusions(s)" mat-button><mat-icon>not_interested</mat-icon></button>
+        <button *ngIf="alreadyExists(s)" (click)="removeFromPlaylist(s)" mat-button><mat-icon>delete</mat-icon></button>
       </mat-card-actions>
     </mat-card>
   </div>

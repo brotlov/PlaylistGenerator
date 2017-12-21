@@ -1,14 +1,38 @@
 export class playlistParameterList {
     additions = {
-        artist: [],
-        track: [],
-        album: [],
-        genre: [],
+        artist: {
+            shown: true,
+            items: []
+        },
+        track: {
+            shown: true,
+            items: []
+        },
+        album: {
+            shown: true,
+            items: []
+        },
+        genre: {
+            shown: true,
+            items: []
+        },
     }
     exclusions = {
-        artist: [],
-        track: [],
-        album: [],
-        genre: [],
+        artist: {
+            shown: true,
+            items: []
+        },
+        track: {
+            shown: true,
+            items: []
+        },
+        album: {
+            shown: true,
+            items: []
+        },
+        genre: {
+            shown: true,
+            items: []
+        },
     }
 }

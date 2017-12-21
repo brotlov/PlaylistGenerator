@@ -38,26 +38,65 @@ export class DialogComponent implements OnInit {
     this.dataObject.id = object.id;
     this.dataObject.strength = 5;
     this.dataObject.relatedArtistStrength = 5;
+    this.dataObject.items = [];
     this.access_token = this.data.token;
 
-    if (this.dataObject.type == "artist"){
-      var url = "https://api.spotify.com/v1/artists/" + this.dataObject.id + "/albums?offset=0&limit=20&album_type=album";
-      this.HttpGet(url).subscribe(
-        (data) => {
-          data.json().items.forEach(result => {
-            var item = new dialogObject();
-            item.name = result.name;
-            item.image = result.images[1].url;
-            item.type = result.type;
-            item.selected = true;
-            item.open = false;
-            item.items = [];
-            var url2 = "https://api.spotify.com/v1/albums/" + result.id;
-            this.HttpGet(url2).subscribe(
+    if (this.checkIfExists(this.dataObject)){
+      let index = this.playlistParameters.getIndex(this.dataObject);
+      this.dataObject = this.playlistParameters.getItem(this.dataObject, index);
+      if (this.dataObject.items == undefined){
+        this.dataObject.items = [];
+        //TODO: Not repeat this code
+        if (this.dataObject.type == "artist"){
+          var url = "https://api.spotify.com/v1/artists/" + this.dataObject.id + "/albums?offset=0&limit=40&album_type=album";
+          this.HttpGet(url).subscribe(
             (data) => {
+              data.json().items.forEach(result => {
+                var item = new dialogObject();
+                item.name = result.name;
+                item.image = result.images[1].url;
+                item.type = result.type;
+                item.selected = true;
+                item.open = false;
+                item.items = [];
+                var url2 = "https://api.spotify.com/v1/albums/" + result.id;
+                this.HttpGet(url2).subscribe(
+                (data) => {
+                  var response = data.json();
+                  var newDate = new Date(response.release_date).getFullYear();
+                  item.year = newDate.toString();
+                  response.tracks.items.forEach(track => {
+                    var subItem = new dialogObjectIndividual();
+                    subItem.name = track.name;
+                    subItem.type = track.type;
+                    subItem.selected = item.selected;
+                    subItem.id = track.id;
+                    subItem.number = track.track_number;
+                    item.items.push(subItem);
+                  })
+                },
+                (error) => {
+
+                });
+                this.objects.push(item);
+                this.dataObject.items.push(item);
+              })
+              console.log(this.objects);
+            },
+            (error) => {
+
+            }
+          );
+        }
+        else if (this.dataObject.type == "album"){
+          var url = "https://api.spotify.com/v1/albums/" + this.dataObject.id + "?offset=0&limit=20&album_type=album";
+          this.HttpGet(url).subscribe(
+            (data) => {
+              var item = new dialogObject();
+              item.items = [];
+              item.selected = true;
               var response = data.json();
               var newDate = new Date(response.release_date).getFullYear();
-              item.year = newDate.toString();
               response.tracks.items.forEach(track => {
                 var subItem = new dialogObjectIndividual();
                 subItem.name = track.name;
@@ -67,45 +106,88 @@ export class DialogComponent implements OnInit {
                 subItem.number = track.track_number;
                 item.items.push(subItem);
               })
+              this.objects.push(item);
+              this.dataObject.items.push(item);
+              console.log(this.objects);
             },
             (error) => {
 
-            });
+            }
+          );
+        }
+      }
+    }else{
+      if (this.dataObject.type == "artist"){
+        var url = "https://api.spotify.com/v1/artists/" + this.dataObject.id + "/albums?offset=0&limit=40&album_type=album";
+        this.HttpGet(url).subscribe(
+          (data) => {
+            data.json().items.forEach(result => {
+              var item = new dialogObject();
+              item.name = result.name;
+              item.image = result.images[1].url;
+              item.type = result.type;
+              item.selected = true;
+              item.open = false;
+              item.items = [];
+              var url2 = "https://api.spotify.com/v1/albums/" + result.id;
+              this.HttpGet(url2).subscribe(
+              (data) => {
+                var response = data.json();
+                var newDate = new Date(response.release_date).getFullYear();
+                item.year = newDate.toString();
+                response.tracks.items.forEach(track => {
+                  var subItem = new dialogObjectIndividual();
+                  subItem.name = track.name;
+                  subItem.type = track.type;
+                  subItem.selected = item.selected;
+                  subItem.id = track.id;
+                  subItem.number = track.track_number;
+                  item.items.push(subItem);
+                })
+              },
+              (error) => {
+
+              });
+              this.objects.push(item);
+              this.dataObject.items.push(item);
+            })
+            console.log(this.objects);
+          },
+          (error) => {
+
+          }
+        );
+      }
+      else if (this.dataObject.type == "album"){
+        var url = "https://api.spotify.com/v1/albums/" + this.dataObject.id + "?offset=0&limit=20&album_type=album";
+        this.HttpGet(url).subscribe(
+          (data) => {
+            var item = new dialogObject();
+            item.items = [];
+            item.selected = true;
+            var response = data.json();
+            var newDate = new Date(response.release_date).getFullYear();
+            response.tracks.items.forEach(track => {
+              var subItem = new dialogObjectIndividual();
+              subItem.name = track.name;
+              subItem.type = track.type;
+              subItem.selected = item.selected;
+              subItem.id = track.id;
+              subItem.number = track.track_number;
+              item.items.push(subItem);
+            })
             this.objects.push(item);
-          })
-          console.log(this.objects);
-        },
-        (error) => {
+            this.dataObject.items.push(item);
+            console.log(this.objects);
+          },
+          (error) => {
 
-        }
-      );
+          }
+        );
+      }
     }
-    else if (this.dataObject.type == "album"){
-      var url = "https://api.spotify.com/v1/albums/" + this.dataObject.id + "?offset=0&limit=20&album_type=album";
-      this.HttpGet(url).subscribe(
-        (data) => {
-          var item = new dialogObject();
-          item.items = [];
-          item.selected = true;
-          var response = data.json();
-          var newDate = new Date(response.release_date).getFullYear();
-          response.tracks.items.forEach(track => {
-            var subItem = new dialogObjectIndividual();
-            subItem.name = track.name;
-            subItem.type = track.type;
-            subItem.selected = item.selected;
-            subItem.id = track.id;
-            subItem.number = track.track_number;
-            item.items.push(subItem);
-          })
-          this.objects.push(item);
-          console.log(this.objects);
-        },
-        (error) => {
 
-        }
-      );
-    }
+    
 }
 
   //TODO: Move this to a service
@@ -131,16 +213,38 @@ export class DialogComponent implements OnInit {
 
   addToAdditions(object){
     let successMessage = "Added to Playlist";
-    this.NotificationHandler(true,successMessage, object);
-    this.playlistParameters.addToParameterList(object);
-    console.log(this.playlistParameters);
+    let errorMessage = "Sorry, that item is already in your playlist";
+    if (this.playlistParameters.addToParameterList(object)){
+      this.NotificationHandler(true,successMessage, object);
+    }else{
+      this.NotificationHandler(false,errorMessage, object);
+    }
   }
 
   addToExclusions(object){
     let successMessage = "Added to Playlist Exclusions";
+    let errorMessage = "Sorry, that item is already excluded from your playlist";
+    if (this.playlistParameters.addToExclusionsList(object)){
+      this.NotificationHandler(true,successMessage, object);
+    }else{
+      this.NotificationHandler(false,errorMessage, object);
+    }
+  }
+
+  updateItem(object){
+    this.playlistParameters.savePlaylistItem(object);
+    let successMessage = "Playlist Option Saved";
     this.NotificationHandler(true,successMessage, object);
-    this.playlistParameters.addToExclusionsList(object);
-    console.log(this.playlistParameters);
+  }
+
+  checkIfExists(object){
+    return this.playlistParameters.checkItemAlreadyInPlaylist(object);
+  }
+
+  deleteItem(object){
+    let successMessage = "Removed from Playlist";
+    this.playlistParameters.removeFromPlaylist(object);
+    this.NotificationHandler(true,successMessage, object);
   }
 
   //TODO: Move this to a service

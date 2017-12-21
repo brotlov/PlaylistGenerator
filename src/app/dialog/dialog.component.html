@@ -4,12 +4,12 @@
       <mat-card-title>{{dataObject.name}}</mat-card-title>
       <mat-card-subtitle>{{dataObject.type}}</mat-card-subtitle>
       <div class="model-result-container">
-        <div *ngFor="let o of objects" [ngClass]="['modal-item-result', (o.open == true || dataObject.type == 'album' ? 'open' : '')]">
+        <div *ngFor="let o of dataObject.items" [ngClass]="['modal-item-result', (o.open == true || dataObject.type == 'album' ? 'open' : '')]">
           <img *ngIf="dataObject.type == 'artist'" [src]="o.image">
           <div *ngIf="dataObject.type == 'artist'">
             <span>{{o.year}}</span>
             <h3 class="result-title">{{o.name}}</h3>
-            <mat-checkbox  (change)="updateChildItems(o)" [(ngModel)]="o.selected">Included</mat-checkbox>
+            <mat-checkbox (change)="updateChildItems(o)" [checked]="o.selected" [(ngModel)]="o.selected">Included</mat-checkbox>
             <div class="result-listings">
               <div *ngFor="let i of o.items">
                 <h5>{{i.name}}</h5>
@@ -38,8 +38,11 @@
         <p>Adjust this scale to change how often you want this {{type}} to appear in your playlist</p>
         <mat-slider [(ngModel)]="dataObject.strength" thumbLabel min="0" max="10" step="1" value="5"></mat-slider>
          <mat-card-actions>
-          <button (click)="addToAdditions(dataObject)" mat-button><mat-icon>add</mat-icon></button>
-          <button (click)="addToExclusions(dataObject)" mat-button><mat-icon>not_interested</mat-icon></button>
+          <button *ngIf="!checkIfExists(dataObject)" (click)="addToAdditions(dataObject)" mat-button><mat-icon>add</mat-icon></button>
+          <button *ngIf="!checkIfExists(dataObject)" (click)="addToExclusions(dataObject)" mat-button><mat-icon>not_interested</mat-icon></button>
+          <button *ngIf="checkIfExists(dataObject)" (click)="updateItem(dataObject)" mat-button><mat-icon>save</mat-icon></button>
+          <button *ngIf="checkIfExists(dataObject)" (click)="deleteItem(dataObject)" mat-button><mat-icon>delete</mat-icon></button>
+          
         </mat-card-actions>
       </div>
     </div>
