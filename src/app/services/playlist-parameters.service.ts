@@ -97,5 +97,4 @@ export class PlaylistParametersService {
   getParameterList(){
     return this.playlistParameterList.getValue();
   }
-
 }

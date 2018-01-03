@@ -1,28 +1,34 @@
 <mat-card class="modal">
-  <mat-card-content class="halves">
-    <div>
-      <mat-card-title>{{dataObject.name}}</mat-card-title>
-      <mat-card-subtitle>{{dataObject.type}}</mat-card-subtitle>
-      <div class="model-result-container">
-        <div *ngFor="let o of dataObject.items" [ngClass]="['modal-item-result', (o.open == true || dataObject.type == 'album' ? 'open' : '')]">
-          <img *ngIf="dataObject.type == 'artist'" [src]="o.image">
-          <div *ngIf="dataObject.type == 'artist'">
-            <span>{{o.year}}</span>
-            <h3 class="result-title">{{o.name}}</h3>
-            <mat-checkbox (change)="updateChildItems(o)" [checked]="o.selected" [(ngModel)]="o.selected">Included</mat-checkbox>
-            <div class="result-listings">
+  <mat-card-content class="halves fh">
+    
+    <div style="position:relative; height:100%;" >
+      <!-- <div *ngIf="loading" >
+        <div class="loader"></div>
+      </div> -->
+      <div >
+        <mat-card-title>{{dataObject.name}}</mat-card-title>
+        <mat-card-subtitle>{{dataObject.type}}</mat-card-subtitle>
+        <div class="model-result-container">
+          <div *ngFor="let o of dataObject.items" [ngClass]="['modal-item-result', (o.open == true || dataObject.type == 'album' ? 'open' : '')]">
+            <img *ngIf="dataObject.type == 'artist'" [src]="o.image">
+            <div *ngIf="dataObject.type == 'artist'">
+              <span>{{o.year}}</span>
+              <h3 class="result-title">{{o.name}}</h3>
+              <mat-checkbox (change)="updateChildItems(o)" [checked]="o.selected" [(ngModel)]="o.selected">Included</mat-checkbox>
+              <div class="result-listings">
+                <div *ngFor="let i of o.items">
+                  <h5>{{i.name}}</h5>
+                  <mat-checkbox [(ngModel)]="i.selected">Included</mat-checkbox>
+                </div>
+              </div>
+              <button color="primary" class="load-more" *ngIf="o.open != true" (click)="o.open = !o.open" mat-raised-button>View Items</button>
+              <button color="primary" class="load-more" *ngIf="o.open == true" (click)="o.open = !o.open" mat-raised-button>Hide Items</button>
+            </div>
+            <div class="result-listings" *ngIf="dataObject.type == 'album'">
               <div *ngFor="let i of o.items">
                 <h5>{{i.name}}</h5>
-                <mat-checkbox [(ngModel)]="i.selected">Included</mat-checkbox>
+                <mat-checkbox  [(ngModel)]="i.selected">Included</mat-checkbox>
               </div>
-            </div>
-            <button color="primary" class="load-more" *ngIf="o.open != true" (click)="o.open = !o.open" mat-raised-button>View Items</button>
-            <button color="primary" class="load-more" *ngIf="o.open == true" (click)="o.open = !o.open" mat-raised-button>Hide Items</button>
-          </div>
-          <div class="result-listings" *ngIf="dataObject.type == 'album'">
-            <div *ngFor="let i of o.items">
-              <h5>{{i.name}}</h5>
-              <mat-checkbox  [(ngModel)]="i.selected">Included</mat-checkbox>
             </div>
           </div>
         </div>

@@ -7,6 +7,9 @@ import {Headers, RequestOptions} from '@angular/http';
 import {MatSnackBar} from '@angular/material';
 import {playlistParameter} from '../models/playlistParameter';
 import {PlaylistParametersService} from '../services/playlist-parameters.service';
+import {HttpServiceService} from '../services/http-service.service';
+import {PlaylistTracksService} from '../services/playlist-tracks.service';
+
 
 @Component({
   selector: 'app-dialog',
@@ -15,6 +18,7 @@ import {PlaylistParametersService} from '../services/playlist-parameters.service
 })
 export class DialogComponent implements OnInit {
 
+  loading = true;
   dataObject = new playlistParameter();
   // name = "Fall Out Boy";
   // type = "artist";
@@ -28,6 +32,8 @@ export class DialogComponent implements OnInit {
     private http: Http,
     public snackBar: MatSnackBar,
     private playlistParameters: PlaylistParametersService,
+    private httpService: HttpServiceService,
+    private playlistTrackService: PlaylistTracksService
     ) { }
 
   ngOnInit() {
@@ -39,6 +45,8 @@ export class DialogComponent implements OnInit {
     this.dataObject.strength = 5;
     this.dataObject.relatedArtistStrength = 5;
     this.dataObject.items = [];
+    this.dataObject.genres = object.genres;
+    this.dataObject.relatedTracks = object.relatedTracks;
     this.access_token = this.data.token;
 
     if (this.checkIfExists(this.dataObject)){
@@ -49,7 +57,7 @@ export class DialogComponent implements OnInit {
         //TODO: Not repeat this code
         if (this.dataObject.type == "artist"){
           var url = "https://api.spotify.com/v1/artists/" + this.dataObject.id + "/albums?offset=0&limit=40&album_type=album";
-          this.HttpGet(url).subscribe(
+          this.httpService.HttpGet(url).subscribe(
             (data) => {
               data.json().items.forEach(result => {
                 var item = new dialogObject();
@@ -60,7 +68,7 @@ export class DialogComponent implements OnInit {
                 item.open = false;
                 item.items = [];
                 var url2 = "https://api.spotify.com/v1/albums/" + result.id;
-                this.HttpGet(url2).subscribe(
+                this.httpService.HttpGet(url2).subscribe(
                 (data) => {
                   var response = data.json();
                   var newDate = new Date(response.release_date).getFullYear();
@@ -73,6 +81,7 @@ export class DialogComponent implements OnInit {
                     subItem.id = track.id;
                     subItem.number = track.track_number;
                     item.items.push(subItem);
+                    
                   })
                 },
                 (error) => {
@@ -80,8 +89,10 @@ export class DialogComponent implements OnInit {
                 });
                 this.objects.push(item);
                 this.dataObject.items.push(item);
+                this.loading = false;
               })
               console.log(this.objects);
+              this.loading = false;
             },
             (error) => {
 
@@ -90,7 +101,7 @@ export class DialogComponent implements OnInit {
         }
         else if (this.dataObject.type == "album"){
           var url = "https://api.spotify.com/v1/albums/" + this.dataObject.id + "?offset=0&limit=20&album_type=album";
-          this.HttpGet(url).subscribe(
+          this.httpService.HttpGet(url).subscribe(
             (data) => {
               var item = new dialogObject();
               item.items = [];
@@ -108,6 +119,7 @@ export class DialogComponent implements OnInit {
               })
               this.objects.push(item);
               this.dataObject.items.push(item);
+              this.loading = false;
               console.log(this.objects);
             },
             (error) => {
@@ -119,7 +131,7 @@ export class DialogComponent implements OnInit {
     }else{
       if (this.dataObject.type == "artist"){
         var url = "https://api.spotify.com/v1/artists/" + this.dataObject.id + "/albums?offset=0&limit=40&album_type=album";
-        this.HttpGet(url).subscribe(
+        this.httpService.HttpGet(url).subscribe(
           (data) => {
             data.json().items.forEach(result => {
               var item = new dialogObject();
@@ -130,7 +142,7 @@ export class DialogComponent implements OnInit {
               item.open = false;
               item.items = [];
               var url2 = "https://api.spotify.com/v1/albums/" + result.id;
-              this.HttpGet(url2).subscribe(
+              this.httpService.HttpGet(url2).subscribe(
               (data) => {
                 var response = data.json();
                 var newDate = new Date(response.release_date).getFullYear();
@@ -143,6 +155,7 @@ export class DialogComponent implements OnInit {
                   subItem.id = track.id;
                   subItem.number = track.track_number;
                   item.items.push(subItem);
+                  
                 })
               },
               (error) => {
@@ -150,6 +163,7 @@ export class DialogComponent implements OnInit {
               });
               this.objects.push(item);
               this.dataObject.items.push(item);
+              this.loading = false;
             })
             console.log(this.objects);
           },
@@ -160,7 +174,7 @@ export class DialogComponent implements OnInit {
       }
       else if (this.dataObject.type == "album"){
         var url = "https://api.spotify.com/v1/albums/" + this.dataObject.id + "?offset=0&limit=20&album_type=album";
-        this.HttpGet(url).subscribe(
+        this.httpService.HttpGet(url).subscribe(
           (data) => {
             var item = new dialogObject();
             item.items = [];
@@ -178,6 +192,7 @@ export class DialogComponent implements OnInit {
             })
             this.objects.push(item);
             this.dataObject.items.push(item);
+            this.loading = false;
             console.log(this.objects);
           },
           (error) => {
@@ -186,55 +201,31 @@ export class DialogComponent implements OnInit {
         );
       }
     }
-
-    
 }
 
-  //TODO: Move this to a service
-  public HttpGet(url){
-    let headers = new Headers();
-    headers.append('Content-Type', 'application/json');
-    headers.append('Authorization', `Bearer ${this.access_token}`);
-    let options = new RequestOptions({ headers: headers });
-    return this.http.get(url, options) 
-  }
-
-  //TODO: Move this to a service
-  public ErrorHander(url, data, error){
-    var errorCode = error.json().error.status;
-    switch(errorCode){
-      case 401:
-        // data = {
-        //   refresh_token: this.refresh_token
-        // } 
-        // this.router.navigateByUrl("/refresh_token?access_token=" + this.access_token + "refresh_token=" + this.refresh_token)
-    }
-  }
-
   addToAdditions(object){
-    let successMessage = "Added to Playlist";
-    let errorMessage = "Sorry, that item is already in your playlist";
-    if (this.playlistParameters.addToParameterList(object)){
-      this.NotificationHandler(true,successMessage, object);
-    }else{
-      this.NotificationHandler(false,errorMessage, object);
-    }
+    this.playlistTrackService.addToAdditions(object);
   }
 
   addToExclusions(object){
-    let successMessage = "Added to Playlist Exclusions";
-    let errorMessage = "Sorry, that item is already excluded from your playlist";
-    if (this.playlistParameters.addToExclusionsList(object)){
-      this.NotificationHandler(true,successMessage, object);
-    }else{
-      this.NotificationHandler(false,errorMessage, object);
-    }
+    this.playlistTrackService.addToExclusions(object);
   }
+
+  generateSelectedParameters(obj){
+    return Object.keys(obj).map((key)=>{ return {key:key, value:obj[key]}});
+  }
+
+  combineArray(a,b) {
+    var len = a.length;
+    for (var i=0; i < len; i=i+5000) {
+        b.unshift.apply( b, a.slice( i, i+5000 ) );
+    }
+  } 
 
   updateItem(object){
     this.playlistParameters.savePlaylistItem(object);
     let successMessage = "Playlist Option Saved";
-    this.NotificationHandler(true,successMessage, object);
+    this.httpService.NotificationHandler(true,successMessage, object);
   }
 
   checkIfExists(object){
@@ -244,16 +235,10 @@ export class DialogComponent implements OnInit {
   deleteItem(object){
     let successMessage = "Removed from Playlist";
     this.playlistParameters.removeFromPlaylist(object);
-    this.NotificationHandler(true,successMessage, object);
+    this.httpService.NotificationHandler(true,successMessage, object);
   }
 
-  //TODO: Move this to a service
-  public NotificationHandler(success, message, object){
-    this.snackBar.open(message, 'Dismiss', {
-      duration: 5000,
-    });
-  }
-
+  
   updateChildItems(item){
     var selected = item.selected;
     item.items.forEach(result => {

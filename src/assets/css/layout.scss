@@ -17,8 +17,14 @@ body{
         padding: 0;
         transition: .2s;
     }
+    .padding{
+        padding: $universalPadding;
+    }
     .hidden{
         display: none;
+    }
+    .margin-top{
+        margin-top:$universalPadding;
     }
     .loader{
         z-index:10;
@@ -34,7 +40,7 @@ body{
         background-repeat: no-repeat;
     }
     .navbar {
-        background: #191414;
+        background: $blue;
         text-align: center;
         &.search-active{
             position: fixed;
@@ -91,12 +97,45 @@ body{
     .center {
         text-align: center;
     }
-    
+    .mat-form-field{
+        &.wide{
+            // width:25%;
+            line-height: 1.25;
+        }
+    }
     .container {
         max-width: 100%;
         width: 1200px;
         margin: 0 auto;
         height: 30vh;
+        &.thirds{
+            font-size:0;
+            text-align: left;
+            > div{
+                font-size:16px;
+                width:33%;
+                display: inline-block;
+                text-align: left;
+                border-bottom-color:#fff;
+                label{
+                    color:#fff;
+                }
+                .mat-form-field-underline{
+                    background-color:rgba(255,255,255,.42);
+                }
+                .mat-form-field{
+                    color:#fff;
+                    font-size:30px;
+                    width:100%;
+                    max-height: 101px;
+                    .mat-form-field-wrapper{
+                        input{
+                            color:#fff;
+                        }
+                    }
+                }
+            }
+        }
         &.home{
             &.fw{
                 height:70vh;
@@ -114,7 +153,7 @@ body{
             font-size:16px;
         }
         &.fw.short {
-            height: auto;
+            height: 15vh;
         }
         &.sm {
             width: 650px;
@@ -166,7 +205,7 @@ body{
         position: relative;
         &.search-active{
             position: fixed;
-            top:101px;
+            top:15vh;
             left:0;
             right:0;
             margin:auto;
@@ -194,27 +233,33 @@ body{
             line-height: 1.5rem;
         }
     }
+    
     .search-results-wrapper{
         width:100%;
-        margin-top:170px;
+        // margin-top:70px;
+        position: relative;
+        top: -125px;
+        background:#fff;
         h3{
             max-width:1200px;
-            margin:1em auto;
+            margin:0 auto 1em auto;
         }
         .search-results{
             position: relative;
             padding:$universalPadding;
-            column-count: 6;
-            column-gap: 1em;
+            text-align: center;
+            // column-count: 6;
+            // column-gap: 1em;
             min-height:50vh;
             .result{
                 display: inline-block;
                 font-size:16px;
-                width:100%;
+                text-align: left;
+                width:15%;
                 margin-right: 1em;
                 margin-bottom: 1em;
                 vertical-align: top;
-                &:nth-of-type(4n+4), &:last-of-type{
+                &:nth-of-type(6n+6), &:last-of-type{
                     margin-right: 0;
                 }
                 .mat-card-actions{
@@ -234,6 +279,9 @@ body{
             }
         }
         .halves{
+            &.fh{
+                height:100%;
+            }
             font-size:0;
             > div{
                 vertical-align: top;
@@ -339,10 +387,9 @@ body{
             }
         }
     }
-    .cdk-overlay-pane{
-        margin-bottom:50px!important;
-        
-    }
+    // .cdk-overlay-pane{
+    //     margin-bottom:50px!important;
+    // }
     .mat-snack-bar-container{
         background:#fff;
         border:1px solid $spotifySecondary;
@@ -407,6 +454,49 @@ body{
     }
     .mat-card-actions{
         text-align: center;
+    }
+    .playlist-table{
+        
+        .mat-table{
+            padding:$universalPadding;
+        }
+    }
+    .mat-menu-panel{
+        margin-top:43px;
+    }
+    .playlist-table{
+        .table-filter{
+            padding:$universalPadding;
+            .mat-form-field{
+                width:100%;
+            }
+        }
+        .mat-table{
+            max-height: 60vh;
+            overflow-y: scroll;
+            .mat-button{
+                padding:0;
+                width:100%;
+                text-align: left;
+                height: 47px;
+                padding:5px;
+                white-space: normal;
+                line-height: 20px;
+            }
+        }
+        .mat-paginator-container{
+            justify-content: center;
+        }
+        .mat-header-row{
+            position: sticky;
+            top: -25px;
+            background: white;
+            z-index: 9;
+        }
+    }
+    .notification{
+        position: relative;
+        top:-50px!important;
     }
 }
 .scrollbar {
