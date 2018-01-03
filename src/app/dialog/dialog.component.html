@@ -35,13 +35,13 @@
       </div>
     </div>
     <div>
-      <img mat-card-image [src]="dataObject.image" alt="{{name}}">
+      <img mat-card-image [src]="dataObject.image" alt="{{dataObject.name}}">
       <div *ngIf="dataObject.type == 'artist'">
         <p>Adjust this scale to change how often you want related artists from this artist to appear in your playlist</p>
         <mat-slider [(ngModel)]="dataObject.relatedArtistStrength" thumbLabel min="0" max="10" step="1" value="5"></mat-slider>
       </div>
       <div>
-        <p>Adjust this scale to change how often you want this {{type}} to appear in your playlist</p>
+        <p>Adjust this scale to change how often you want this {{dataObject.type}} to appear in your playlist</p>
         <mat-slider [(ngModel)]="dataObject.strength" thumbLabel min="0" max="10" step="1" value="5"></mat-slider>
          <mat-card-actions>
           <button *ngIf="!checkIfExists(dataObject)" (click)="addToAdditions(dataObject)" mat-button><mat-icon>add</mat-icon></button>
